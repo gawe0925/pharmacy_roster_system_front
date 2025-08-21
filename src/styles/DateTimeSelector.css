@@ -1,0 +1,234 @@
+.datetime-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.datetime-label {
+    font-weight: 600;
+    color: #4a5649;
+    font-size: 14px;
+}
+
+.datetime-inputs {
+    display: flex;
+    gap: 12px;
+}
+
+.date-input-container,
+.time-input-container {
+    position: relative;
+    flex: 1;
+}
+
+.date-input,
+.time-input {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border: 2px solid #e6e8e5;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #4a5649;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.date-input:focus,
+.time-input:focus {
+    outline: none;
+    border-color: #8a9a7b;
+    box-shadow: 0 0 0 3px rgba(138, 154, 123, 0.1);
+}
+
+.time-input:disabled {
+    background: #f8f9f7;
+    color: #9ba098;
+    cursor: not-allowed;
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.business-hours-hint {
+    font-size: 12px;
+    color: #8a9a7b;
+    background: #f8f9f7;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-align: center;
+    border-left: 3px solid #8a9a7b;
+}
+
+/* 美化日期選擇器 */
+.date-input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    cursor: pointer;
+}
+
+/* 美化下拉選單 */
+.time-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 40px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+
+.time-input option {
+    padding: 8px 12px;
+    background: #ffffff;
+    color: #4a5649;
+}
+
+.time-input option:disabled {
+    color: #9ba098;
+    background: #f8f9f7;
+}
+
+/* 響應式設計 */
+@media (max-width: 480px) {
+    .datetime-inputs {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .date-input,
+    .time-input {
+        padding: 10px 36px 10px 10px;
+    }
+    
+    .input-icon {
+        right: 10px;
+        font-size: 14px;
+    }
+    
+    .business-hours-hint {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+}
+
+/* 深色模式支援 */
+@media (prefers-color-scheme: dark) {
+    .date-input,
+    .time-input {
+        background: #2a2a2a;
+        color: #e0e0e0;
+        border-color: #444;
+    }
+    
+    .business-hours-hint {
+        background: #2a2a2a;
+        color: #a0a0a0;
+    }
+}
+
+.time-mode-container {
+    margin: 10px 0;
+}
+
+.time-mode-toggle {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.toggle-option {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+.toggle-option input[type="radio"] {
+    margin-right: 5px;
+}
+
+.toggle-option:hover {
+    color: #007bff;
+}
+
+.time-info-hint {
+    margin-top: 5px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff;
+    font-size: 13px;
+    color: #666;
+    border-radius: 4px;
+}
+
+.datetime-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.date-input-container,
+.time-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-input,
+.time-input {
+    flex: 1;
+    padding: 8px 35px 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-icon {
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+    font-size: 16px;
+}
+
+.datetime-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 週末提示樣式 */
+.time-info-hint.weekend-warning {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.time-info-hint.weekend-warning::before {
+    content: "⚠️ ";
+}
+
+/* 禁用狀態樣式 */
+.date-input:disabled,
+.time-input:disabled {
+    background-color: #f8f9fa;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.toggle-option input[type="radio"]:disabled + span {
+    color: #6c757d;
+    cursor: not-allowed;
+}

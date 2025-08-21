@@ -1,0 +1,1546 @@
+.payroll {
+    padding: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #f7f5f3;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 頁面標題區域 */
+.page-header {
+    margin-bottom: 40px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.page-title-section {
+    flex: 1;
+}
+
+.page-title {
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: #6b5b73;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    letter-spacing: -0.02em;
+}
+
+.title-icon {
+    font-size: 2.8rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+    color: #8b8680;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 12px 16px;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+}
+
+.user-label {
+    font-weight: 400;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #6b5b73;
+}
+
+.header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #d4c4b0;
+    padding: 12px 24px;
+    border-radius: 24px;
+    color: #8b8680;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    border-color: #a67c52;
+    color: #6b5b73;
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 134, 128, 0.15);
+}
+
+/* 搜尋區域 */
+.search-section {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(139, 134, 128, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 196, 176, 0.3);
+}
+
+.search-container {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* 搜尋類型標籤頁 - 修正 hover 問題 */
+.search-type-tabs {
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.tab-buttons {
+    display: flex;
+    background: rgba(166, 124, 82, 0.1);
+    border-radius: 20px;
+    padding: 6px;
+    gap: 4px;
+    width: 400px;
+    border: 1px solid rgba(212, 196, 176, 0.4);
+    margin: 0 auto; /* 額外確保置中 */
+}
+
+.tab-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #8b8680;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+
+.tab-button:hover:not(.active) {
+    color: #6b5b73;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.tab-button.active {
+    background: #a67c52;
+    color: white;
+    box-shadow: 0 2px 8px rgba(166, 124, 82, 0.3);
+}
+
+.tab-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.tab-text {
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* 搜尋表單包裝器 */
+.search-form-wrapper {
+    background: rgba(247, 245, 243, 0.6);
+    border-radius: 20px;
+    padding: 32px;
+    border: 1px solid rgba(212, 196, 176, 0.2);
+    width: 100%;
+    max-width: 900px; /* 限制最大寬度 */
+    margin: 0 auto; /* 確保置中 */
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+}
+
+/* 員工選擇容器 - 水平置中 */
+.employee-select-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.employee-select-container .field-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6b5b73;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+}
+
+.employee-select-container .field-input {
+    width: 100%;
+}
+
+/* 固定大小的日期欄位容器 */
+.date-fields-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    min-height: 120px; /* 固定高度防止跳動 */
+    position: relative;
+}
+
+.date-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 200px; /* 固定寬度 */
+    height: 100px; /* 固定高度 */
+    position: relative;
+}
+
+/* 計算欄位的特殊處理 */
+.calculated-field {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.calculated-field .field-placeholder {
+    height: 100px; /* 與其他欄位同高度 */
+    width: 200px; /* 與其他欄位同寬度 */
+}
+
+/* 確保所有日期欄位在同一水平線上 */
+.date-field .field-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6b5b73;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    text-align: center;
+    min-height: 20px; /* 固定標籤高度 */
+    margin-bottom: 8px;
+}
+
+.field-input {
+    padding: 16px 20px;
+    border: 2px solid rgba(212, 196, 176, 0.4);
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b5b73;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(139, 134, 128, 0.08);
+    height: 56px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.field-input:focus {
+    outline: none;
+    border-color: #a67c52;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(166, 124, 82, 0.1), 0 4px 12px rgba(139, 134, 128, 0.12);
+    transform: translateY(-1px);
+}
+
+.field-input:hover:not(:focus) {
+    border-color: rgba(166, 124, 82, 0.6);
+}
+
+/* 只讀輸入框 */
+.readonly-input {
+    background: rgba(212, 196, 176, 0.1) !important;
+    color: #8b8680 !important;
+    cursor: not-allowed;
+    font-style: italic;
+}
+
+.readonly-input:hover {
+    border-color: rgba(212, 196, 176, 0.4) !important;
+    transform: none !important;
+}
+
+/* 選擇框樣式 */
+.select-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 44px;
+    appearance: none;
+}
+
+/* 欄位提示 */
+.field-hint {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #8b8680;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
+    opacity: 0.7;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+/* 搜尋按鈕容器 - 水平置中 */
+.search-button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.search-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 40px;
+    background: linear-gradient(135deg, #c49a6c 0%, #a67c52 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(196, 154, 108, 0.3);
+    height: 56px;
+    min-width: 160px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.search-submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #a67c52 0%, #8b6844 100%);
+    box-shadow: 0 8px 24px rgba(196, 154, 108, 0.4);
+    transform: translateY(-2px);
+}
+
+.search-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 4px 16px rgba(196, 154, 108, 0.15);
+}
+
+.btn-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.btn-text {
+    font-weight: 600;
+}
+
+/* 錯誤訊息 */
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f4e8e0 0%, #ede0d3 100%);
+    border: 2px solid #d4a574;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.error-icon {
+    font-size: 1.2rem;
+    color: #a67c52;
+}
+
+.error-text {
+    font-size: 0.95rem;
+    color: #a67c52;
+    font-weight: 500;
+}
+
+/* 錯誤訊息 (舊版相容) */
+.error-message {
+    background: linear-gradient(135deg, #f4e8e0 0%, #ede0d3 100%);
+    border: 2px solid #d4a574;
+    color: #a67c52;
+    padding: 18px 24px;
+    border-radius: 16px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+}
+
+.error-message .error-icon {
+    font-size: 1.2rem;
+}
+
+/* 結果區域 */
+.results-section {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(139, 134, 128, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 196, 176, 0.2);
+}
+
+/* 統計摘要卡片 */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(247, 245, 243, 0.8) 0%, rgba(240, 235, 229, 0.6) 100%);
+}
+
+.summary-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(139, 134, 128, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(212, 196, 176, 0.2);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.5s ease-out;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c49a6c, #a67c52);
+    opacity: 0.6;
+}
+
+.summary-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(139, 134, 128, 0.15);
+}
+
+.summary-card.highlight {
+    background: linear-gradient(135deg, #c49a6c 0%, #a67c52 100%);
+    color: white;
+    border: none;
+}
+
+.summary-card.highlight::before {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.summary-icon {
+    font-size: 2.4rem;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(166, 124, 82, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.summary-card.highlight .summary-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-header h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.summary-content {
+    text-align: center;
+}
+
+.summary-number {
+    font-size: 2.8rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.summary-label {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* 操作列 */
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 40px;
+    border-top: 1px solid rgba(212, 196, 176, 0.3);
+    border-bottom: 1px solid rgba(212, 196, 176, 0.3);
+    background: rgba(247, 245, 243, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+.period-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+}
+
+.period-label {
+    color: #8b8680;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+}
+
+.period-text {
+    color: #6b5b73;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 196, 176, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.export-btn {
+    background: linear-gradient(135deg, #8b8680 0%, #6b5b73 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(139, 134, 128, 0.25);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #6b5b73 0%, #5a4a5c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 134, 128, 0.35);
+}
+
+.export-icon {
+    font-size: 1rem;
+}
+
+/* 薪資卡片容器 */
+.payroll-cards-container {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 32px;
+}
+
+/* 薪資卡片 */
+.payroll-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(212, 196, 176, 0.3);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(139, 134, 128, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.payroll-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #c49a6c, #a67c52);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.payroll-card:hover {
+    box-shadow: 0 16px 40px rgba(139, 134, 128, 0.15);
+    transform: translateY(-4px);
+    border-color: #a67c52;
+}
+
+.payroll-card:hover::before {
+    opacity: 1;
+}
+
+/* 卡片標題 */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px;
+    border-bottom: 1px solid rgba(212, 196, 176, 0.2);
+    background: rgba(247, 245, 243, 0.4);
+}
+
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.employee-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c49a6c 0%, #a67c52 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 20px rgba(196, 154, 108, 0.3);
+    letter-spacing: -0.02em;
+}
+
+.employee-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.employee-name {
+    font-weight: 500;
+    color: #6b5b73;
+    font-size: 1.3rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.salary-display {
+    text-align: right;
+}
+
+.salary-amount {
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #a67c52;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+/* 卡片內容 */
+.card-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.shift-date-info,
+.shift-type-info,
+.pay-status,
+.additional-info,
+.overtime-info,
+.notes-info {
+    background: rgba(247, 245, 243, 0.6);
+    padding: 20px;
+    border-radius: 16px;
+    border-left: 4px solid #c49a6c;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.shift-date-info:hover,
+.shift-type-info:hover,
+.pay-status:hover,
+.additional-info:hover,
+.overtime-info:hover,
+.notes-info:hover {
+    background: rgba(247, 245, 243, 0.8);
+    transform: translateX(4px);
+}
+
+.pay-status {
+    border-left-color: #8b8680;
+}
+
+.additional-info,
+.overtime-info,
+.notes-info {
+    background: rgba(166, 124, 82, 0.05);
+    border-left: 3px solid #c49a6c;
+    padding: 16px 20px;
+}
+
+.overtime-info {
+    border-left-color: #a67c52;
+    background: rgba(166, 124, 82, 0.08);
+}
+
+.notes-info {
+    border-left-color: #8b8680;
+    background: rgba(139, 134, 128, 0.05);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    line-height: 1.5;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8b8680;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    min-width: 80px;
+    opacity: 0.8;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: #6b5b73;
+    font-weight: 500;
+    text-align: right;
+    word-wrap: break-word;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.shift-date-value,
+.shift-type-value {
+    font-weight: 500;
+    color: #6b5b73;
+}
+
+/* 發薪狀態 */
+.pay-date {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.pay-date.paid {
+    color: #8b8680;
+    background: rgba(139, 134, 128, 0.1);
+}
+
+.pay-date.unpaid {
+    color: #a67c52;
+    background: rgba(166, 124, 82, 0.1);
+    font-style: italic;
+}
+
+.status-icon {
+    font-size: 1.1rem;
+}
+
+/* 空狀態和歡迎狀態 */
+.no-results,
+.welcome-state,
+.no-permission {
+    text-align: center;
+    padding: 80px 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(139, 134, 128, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 196, 176, 0.2);
+}
+
+.no-results-icon,
+.welcome-icon,
+.no-permission-icon {
+    font-size: 4rem;
+    margin-bottom: 24px;
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+.no-results-title,
+.welcome-title,
+.no-permission h3 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: #6b5b73;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+}
+
+.no-results-description,
+.welcome-description,
+.no-permission p {
+    color: #8b8680;
+    font-size: 1rem;
+    margin: 0 auto 32px;
+    font-weight: 300;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+.welcome-description {
+    margin-bottom: 0;
+}
+
+/* 載入狀態 */
+.payroll-loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+}
+
+.payroll-loading .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(212, 196, 176, 0.3);
+    border-top: 3px solid #a67c52;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.payroll-loading p {
+    font-size: 0.9rem;
+    color: #8b8680;
+    margin: 0;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.summary-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.summary-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* 響應式設計 */
+@media (max-width: 1200px) {
+    .payroll-cards-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .payroll {
+        padding: 16px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+    }
+
+    .search-container {
+        padding: 24px;
+    }
+
+    .search-form-wrapper {
+        padding: 20px;
+    }
+
+    .tab-buttons {
+        width: 100%;
+        max-width: 400px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tab-button {
+        padding: 14px 20px;
+        width: 100%;
+    }
+
+    .date-fields-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        min-height: auto;
+    }
+
+    .date-field {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+
+    .search-submit-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .employee-select-container {
+        max-width: 300px;
+    }
+
+    .field-input,
+    .search-submit-btn {
+        height: 52px;
+    }
+
+    .search-submit-btn {
+        margin-top: 8px;
+    }
+
+    .summary-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px;
+    }
+
+    .summary-card {
+        padding: 24px;
+    }
+
+    .actions-bar {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        padding: 20px 24px;
+    }
+
+    .period-info {
+        justify-content: center;
+    }
+
+    .payroll-cards-container {
+        padding: 24px;
+        gap: 20px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .employee-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .salary-display {
+        text-align: center;
+    }
+
+    .salary-amount {
+        font-size: 2rem;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .detail-value {
+        text-align: left;
+    }
+
+    .pay-date {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .payroll {
+        padding: 12px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        gap: 12px;
+    }
+
+    .title-icon {
+        font-size: 1.8rem;
+    }
+
+    .search-container {
+        padding: 20px;
+    }
+
+    .search-form-wrapper {
+        padding: 16px;
+    }
+
+    .tab-button {
+        font-size: 0.85rem;
+        padding: 12px 16px;
+    }
+
+    .field-input,
+    .search-submit-btn {
+        height: 48px;
+        font-size: 0.9rem;
+    }
+
+    .search-submit-btn {
+        padding: 0 24px;
+    }
+
+    .summary-card {
+        padding: 20px;
+    }
+
+    .summary-number {
+        font-size: 2.2rem;
+    }
+
+    .payroll-card {
+        border-radius: 16px;
+    }
+
+    .card-header,
+    .card-body {
+        padding: 20px;
+    }
+
+    .employee-name {
+        font-size: 1.1rem;
+    }
+
+    .salary-amount {
+        font-size: 1.8rem;
+    }
+
+    .employee-avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 1.3rem;
+    }
+}
+
+/* 深色模式適配 */
+@media (prefers-color-scheme: dark) {
+    .payroll {
+        background-color: #2a2622;
+        color: #e8e6e3;
+    }
+
+    .search-section,
+    .results-section,
+    .payroll-card {
+        background: rgba(42, 38, 34, 0.9);
+        border-color: rgba(139, 134, 128, 0.2);
+    }
+
+    .page-title,
+    .employee-name,
+    .detail-value {
+        color: #e8e6e3;
+    }
+
+    .user-info {
+        color: #c4c0bb;
+        background: rgba(42, 38, 34, 0.6);
+    }
+
+    .field-input,
+    .select-input {
+        background: rgba(42, 38, 34, 0.8);
+        border-color: rgba(139, 134, 128, 0.3);
+        color: #e8e6e3;
+    }
+
+    .field-input:focus,
+    .select-input:focus {
+        background: rgba(42, 38, 34, 1);
+    }
+
+    .detail-label {
+        color: #c4c0bb;
+    }
+}
+
+/* 高對比模式 */
+@media (prefers-contrast: high) {
+    .field-input,
+    .select-input {
+        border-width: 3px;
+    }
+
+    .search-submit-btn {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .payroll-card {
+        border-width: 2px;
+    }
+}
+
+/* 減少動畫偏好 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .payroll-card:hover,
+    .summary-card:hover,
+    .search-submit-btn:hover {
+        transform: none;
+    }
+}
+
+/* 列印樣式 */
+@media print {
+    .header-actions,
+    .search-section,
+    .actions-bar {
+        display: none;
+    }
+
+    .payroll {
+        padding: 0;
+        background: white;
+        color: black;
+    }
+
+    .payroll-cards-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .payroll-card {
+        box-shadow: none;
+        border: 2px solid #333;
+        break-inside: avoid;
+        background: white;
+    }
+
+    .summary-cards {
+        background: white;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #333;
+    }
+}
+
+/* 無障礙改進 */
+.search-submit-btn:focus,
+.tab-button:focus,
+.field-input:focus,
+.select-input:focus {
+    outline: 2px solid #a67c52;
+    outline-offset: 2px;
+}
+
+.btn-secondary:focus {
+    outline: 2px solid #a67c52;
+    outline-offset: 2px;
+}
+
+.export-btn:focus {
+    outline: 2px solid #6b5b73;
+    outline-offset: 2px;
+}
+
+/* 確保表單元素在不同狀態下的一致性 */
+.field-input:invalid {
+    border-color: #d4a574;
+}
+
+.field-input:valid {
+    border-color: rgba(212, 196, 176, 0.4);
+}
+
+.field-input:required:valid {
+    border-color: rgba(166, 124, 82, 0.6);
+}
+
+/* 高解析度螢幕優化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .employee-avatar {
+        background-image: linear-gradient(135deg, #c49a6c 0%, #a67c52 100%);
+    }
+    
+    .search-submit-btn {
+        background-image: linear-gradient(135deg, #c49a6c 0%, #a67c52 100%);
+    }
+}
+
+/* 確保載入狀態的視覺效果 */
+.search-submit-btn .btn-spinner {
+    margin-right: 2px;
+}
+
+/* 確保卡片內容的間距一致 */
+.card-body > div:last-child {
+    margin-bottom: 0;
+}
+
+/* 優化空狀態的按鈕樣式 */
+.no-results .btn-secondary {
+    margin-top: 20px;
+    display: inline-flex;
+}
+
+/* 微調字體粗細以提高可讀性 */
+.search-title,
+.welcome-title,
+.no-results-title {
+    font-weight: 400;
+}
+
+.tab-text {
+    font-weight: 500;
+}
+
+/* 確保圖示的一致性 */
+.label-icon,
+.tab-icon,
+.btn-icon,
+.export-icon,
+.status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 確保在所有斷點下表單都能正常工作 */
+@media (max-width: 600px) {
+    .search-submit-btn {
+        font-size: 0.85rem;
+        padding: 0 20px;
+    }
+    
+    .tab-button {
+        font-size: 0.9rem;
+        padding: 14px 20px;
+    }
+    
+    .date-field .field-label {
+        font-size: 0.85rem;
+    }
+    
+    .field-input,
+    .select-input {
+        font-size: 0.95rem;
+        padding: 14px 16px;
+    }
+}
+
+/* 修正計算欄位在區間模式下的顯示問題 */
+.payroll[data-search-type="period"] .calculated-field {
+    visibility: visible;
+    opacity: 1;
+}
+
+.payroll[data-search-type="custom"] .calculated-field {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 確保佔位符在自訂模式下完全隱藏但保持空間 */
+.payroll[data-search-type="custom"] .calculated-field .field-placeholder {
+    visibility: visible; /* 保持空間但內容不可見 */
+}
+
+.payroll[data-search-type="custom"] .calculated-field .field-label,
+.payroll[data-search-type="custom"] .calculated-field .field-input,
+.payroll[data-search-type="custom"] .calculated-field .field-hint {
+    visibility: hidden;
+}
+
+/* 優化過渡效果 */
+.calculated-field * {
+    transition: all 0.3s ease;
+}
+
+/* 確保容器在切換模式時保持穩定 */
+.date-fields-container {
+    transition: none; /* 移除過渡效果防止跳動 */
+}
+
+.date-field {
+    transition: none; /* 移除過渡效果防止跳動 */
+}
+
+/* 修正字體載入問題 */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap;
+}
+
+/* 確保所有文字都有適當的行高 */
+* {
+    line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+}
+
+/* 修正可能的 z-index 問題 */
+.search-section {
+    position: relative;
+    z-index: 1;
+}
+
+.tab-button {
+    position: relative;
+    z-index: 2;
+}
+
+.tab-button.active {
+    z-index: 3;
+}
+
+/* 確保表單驗證樣式 */
+.field-input:invalid:not(:placeholder-shown) {
+    border-color: #d4a574;
+    box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.2);
+}
+
+.field-input:valid:not(:placeholder-shown) {
+    border-color: rgba(166, 124, 82, 0.6);
+}
+
+/* 優化選擇框在不同瀏覽器的顯示 */
+.select-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.select-input::-ms-expand {
+    display: none;
+}
+
+.date-input {
+    padding: 16px 20px;
+    border: 2px solid rgba(212, 196, 176, 0.4);
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b5b73;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(139, 134, 128, 0.08);
+    height: 56px;
+    box-sizing: border-box;
+    width: 100%;
+    cursor: pointer;
+    /* 移除日曆圖示但保留功能 */
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: none;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+
+/* 隱藏數字調整按鈕 */
+.date-input::-webkit-inner-spin-button,
+.date-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #a67c52;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(166, 124, 82, 0.1), 0 4px 12px rgba(139, 134, 128, 0.12);
+    transform: translateY(-1px);
+}
+
+.date-input:hover:not(:focus) {
+    border-color: rgba(166, 124, 82, 0.6);
+}
+
+/* 修正 Safari 的圓角問題 */
+.field-input,
+.search-submit-btn,
+.tab-button {
+    -webkit-border-radius: inherit;
+}
+
+/* 確保觸控裝置的點擊區域 */
+@media (hover: none) and (pointer: coarse) {
+    .tab-button,
+    .search-submit-btn,
+    .field-input,
+    .select-input {
+        min-height: 48px;
+    }
+}
+
+/* 最後的清理和確保 */
+.payroll * {
+    box-sizing: border-box;
+}
+
+.payroll img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 確保沒有意外的滾動條 */
+.search-form-wrapper {
+    overflow: visible;
+}
+
+.date-fields-container {
+    overflow: visible;
+}
+
+/* 效能優化 */
+.payroll-card,
+.summary-card {
+    will-change: transform;
+}
+
+.search-submit-btn:hover,
+.tab-button:hover {
+    will-change: transform;
+}
+
+/* 最終確保所有動畫都正常工作 */
+@media (prefers-reduced-motion: no-preference) {
+    .payroll-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    .summary-card {
+        animation: slideIn 0.5s ease-out;
+    }
+}
+
+/* 結束 */
