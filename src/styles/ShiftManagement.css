@@ -235,3 +235,311 @@
 .btn-submit:hover {
     background-color: #0056b3;
 }
+
+/* 時間選擇器容器 - 米色主題 */
+.time-select-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #fefdf8 0%, #faf9f5 100%);
+    border-radius: 12px;
+    border: 1px solid #e8e5dc;
+}
+
+.time-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.time-label {
+    font-weight: 600;
+    color: #8b7355;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 8px;
+    border: 2px solid #e8e5dc;
+    transition: all 0.2s ease;
+}
+
+.time-inputs:focus-within {
+    border-color: #a6956b;
+    box-shadow: 0 0 0 3px rgba(166, 149, 107, 0.1);
+}
+
+.time-select {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b5b47;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.time-select:hover {
+    background: #faf9f5;
+}
+
+.time-select:focus {
+    background: #f5f3eb;
+}
+
+.time-select option:disabled {
+    color: #d4cbb8;
+    background: #f8f6f0;
+}
+
+.time-separator {
+    font-size: 18px;
+    font-weight: bold;
+    color: #a6956b;
+    margin: 0 4px;
+}
+
+/* 只讀輸入框樣式改善 - 米色主題 */
+.read-only-input {
+    background: linear-gradient(135deg, #f5f3eb 0%, #ede9dd 100%);
+    border: 2px solid #d4cbb8;
+    color: #6b5b47;
+    cursor: not-allowed;
+    font-weight: 600;
+    text-align: center;
+    position: relative;
+}
+
+.read-only-input::before {
+    content: '🔒';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+/* 表單組樣式改善 - 米色主題 */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #6b5b47;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e8e5dc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    color: #6b5b47;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #a6956b;
+    box-shadow: 0 0 0 3px rgba(166, 149, 107, 0.1);
+}
+
+/* 幫助文字樣式 */
+.form-help-text {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #9c8a6b;
+    font-style: italic;
+}
+
+/* 表單動作按鈕改善 - 米色主題 */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e8e5dc;
+}
+
+.btn-cancel {
+    padding: 12px 24px;
+    border: 2px solid #d4cbb8;
+    background: #ffffff;
+    color: #8b7355;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+    border-color: #c4b59d;
+    background: #faf9f5;
+    color: #6b5b47;
+}
+
+.btn-submit {
+    padding: 12px 24px;
+    border: none;
+    background: linear-gradient(135deg, #a6956b 0%, #8b7355 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #8b7355 0%, #75614b 100%);
+    box-shadow: 0 6px 16px rgba(139, 115, 85, 0.4);
+    transform: translateY(-1px);
+}
+
+/* 模態框改善 - 米色主題 */
+.modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(107, 91, 71, 0.15);
+    border: 1px solid #e8e5dc;
+}
+
+.modal-header {
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid #e8e5dc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #fefdf8 0%, #faf9f5 100%);
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-header h2 {
+    color: #6b5b47;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #c4b59d;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f5f3eb;
+    color: #8b7355;
+}
+
+.shift-form {
+    padding: 32px;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .time-select-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    .time-inputs {
+        justify-content: center;
+    }
+    
+    .time-select {
+        min-width: 80px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-submit {
+        width: 100%;
+    }
+}
+
+/* 動畫效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.time-select-container {
+    animation: fadeInUp 0.3s ease;
+}
+
+/* 無障礙改善 - 米色主題 */
+.time-select:focus,
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: 2px solid #a6956b;
+    outline-offset: 2px;
+}
+
+/* 工作時數顯示改善 - 米色主題 */
+.form-group input[type="number"].read-only-input {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    background: linear-gradient(135deg, #f9f7f1 0%, #f2ede1 100%);
+    border-color: #d4cbb8;
+    color: #8b7355;
+}
+
+.time-select {
+    width: auto;
+    min-width: 60px;
+    max-width: 80px;
+    display: inline-block;
+    padding: 4px 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

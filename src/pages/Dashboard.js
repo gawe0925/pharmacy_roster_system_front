@@ -177,11 +177,6 @@ const Dashboard = () => {
             <h1 className="welcome-title">
               {t('welcomeMessage') || '歡迎回來'}，{user?.first_name || user?.username}
             </h1>
-              <p className="date-info">
-                {new Date().getFullYear()}/
-                {String(new Date().getMonth() + 1).padStart(2, '0')}/
-                {String(new Date().getDate()).padStart(2, '0')}
-              </p>
           </div>
           
           <div className="header-actions">

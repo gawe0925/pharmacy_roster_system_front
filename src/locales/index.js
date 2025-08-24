@@ -6,6 +6,7 @@ import zhLogin from './zh/login';
 import zhPayRoll from './zh/payroll'
 import zhRoster from './zh/roster'
 import zhScheduling from './zh/scheduling'
+import zhShift from './zh/shift'
 
 import enCommon from './en/common';
 import enDashboard from './en/dashboard';
@@ -15,6 +16,7 @@ import enLogin from './en/login';
 import enPayRoll from './en/payroll'
 import enRoster from './en/roster'
 import enScheduling from './en/scheduling'
+import enShift from './en/shift'
 
 const translations = {
   zh: {
@@ -26,6 +28,7 @@ const translations = {
     ...zhPayRoll,
     ...zhRoster,
     ...zhScheduling,
+    ...zhShift,
   },
   en: {
     ...enCommon,
@@ -36,6 +39,7 @@ const translations = {
     ...enPayRoll,
     ...enRoster,
     ...enScheduling,
+    ...enShift,
   }
 };
 
