@@ -1,3 +1,39 @@
+English Version
+Overview
+
+Shift-F is the frontend application for the main scheduling system Shift.
+It is built using React (with AI assisted development) and is designed to provide a user-friendly interface for managing shifts, viewing schedules and interacting with the backend API.
+
+Features
+
+🗓 Display shift schedules (daily / weekly)
+
+➕ Add, edit and delete shift entries via UI
+
+👥 Manage team members / roles (frontend portion)
+
+🔗 Communicates with the Django REST API backend
+
+🎨 Responsive UI built with React
+
+Tech Stack
+Category	Technology
+Frontend	React (AI‐assisted development)
+Styling	CSS / Styled Components / etc.
+Build	Create React App (or custom setup)
+API Comm.	Axios / Fetch / etc to backend API
+
+Deployment
+
+Currently deployed / in progress on (e.g.) Vercel / AWS S3 & CloudFront.
+Ensure the backend API endpoint is correctly configured in your environment (e.g., .env or configuration file).
+
+Purpose
+
+This frontend application is built to support the Shift project for a real-world scenario: working in a pharmacy where scheduling is still done manually via Excel by the manager.
+By developing Shift and this frontend, I aim to build a faster, more automated solution and acquire experience in full-stack and cloud-deployed development.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
