@@ -32,7 +32,7 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refresh_token');
       if (refreshToken) {
         try {
-          const resp = await axios.post(`${API_BASE_URL}/api/token/refresh/`, { refresh: refreshToken });
+          const resp = await axios.post(`${API_BASE_URL}/token/refresh/`, { refresh: refreshToken });
           const { access } = resp.data || {};
           if (access) {
             localStorage.setItem('token', access);
@@ -74,13 +74,13 @@ export const memberAPI = {
 
 // -------- User API --------
 export const userAPI = {
-  list: (params) => api.get('/api/users/', { params }),
-  get: (id) => api.get(`/api/users/${id}/`),
-  getCurrentUser: () => api.get('/api/users/me/'),
+  list: (params) => api.get('/users/', { params }),
+  get: (id) => api.get(`/users/${id}/`),
+  getCurrentUser: () => api.get('/users/me/'),
   getStaff: (params) =>
-    api.get('/api/users/', { params: { ...params, is_staff: true } }),
+    api.get('/users/', { params: { ...params, is_staff: true } }),
   getAllForScheduling: (params) =>
-    api.get('/api/users/', { params: { ...params, is_active: true } }),
+    api.get('/users/', { params: { ...params, is_active: true } }),
 };
 
 // -------- Shift Type API --------
@@ -197,40 +197,40 @@ export const wageAPI = {
 
 // -------- Auth API --------
 export const authAPI = {
-  login: (credentials) => api.post('/api/token/', credentials),
-  refresh: (refresh) => api.post('/api/token/refresh/', { refresh }),
-  logout: () => api.post('/api/logout/'),
+  login: (credentials) => api.post('/token/', credentials),
+  refresh: (refresh) => api.post('/token/refresh/', { refresh }),
+  logout: () => api.post('/logout/'),
 
-  resetPassword: (email) => api.post('/api/password-reset/', { email }),
-  resetPasswordConfirm: (data) => api.post('/api/password-reset/confirm/', data),
-  resetPasswordValidate: (data) => api.post('/api/password-reset/validate/', data),
+  resetPassword: (email) => api.post('/password-reset/', { email }),
+  resetPasswordConfirm: (data) => api.post('/password-reset/confirm/', data),
+  resetPasswordValidate: (data) => api.post('/password-reset/validate/', data),
 
-  changePassword: (data) => api.post('/api/change-password/', data),
-  register: (data) => api.post('/api/register/', data),
+  changePassword: (data) => api.post('/change-password/', data),
+  register: (data) => api.post('/register/', data),
 
-  verifyToken: () => api.post('/api/token/verify/'),
-  getUser: () => api.get('/api/user/'),
+  verifyToken: () => api.post('/token/verify/'),
+  getUser: () => api.get('/user/'),
 };
 
 // -------- Notification API --------
 export const notificationAPI = {
-  list: (params) => api.get('/api/notifications/', { params }),
-  markAsRead: (id) => api.patch(`/api/notifications/${id}/`, { is_read: true }),
-  markAllAsRead: () => api.patch('/api/notifications/mark_all_read/'),
-  delete: (id) => api.delete(`/api/notifications/${id}/`),
-  getUnreadCount: () => api.get('/api/notifications/unread_count/'),
+  list: (params) => api.get('/notifications/', { params }),
+  markAsRead: (id) => api.patch(`/notifications/${id}/`, { is_read: true }),
+  markAllAsRead: () => api.patch('/notifications/mark_all_read/'),
+  delete: (id) => api.delete(`/notifications/${id}/`),
+  getUnreadCount: () => api.get('/notifications/unread_count/'),
 };
 
 // -------- Settings API --------
 export const settingsAPI = {
-  get: () => api.get('/api/settings/'),
-  update: (data) => api.patch('/api/settings/', data),
+  get: () => api.get('/settings/'),
+  update: (data) => api.patch('/settings/', data),
 
-  getLeaveTypes: () => api.get('/api/settings/leave_types/'),
-  updateLeaveTypes: (data) => api.patch('/api/settings/leave_types/', data),
+  getLeaveTypes: () => api.get('/settings/leave_types/'),
+  updateLeaveTypes: (data) => api.patch('/settings/leave_types/', data),
 
-  getHolidays: (params) => api.get('/api/settings/holidays/', { params }),
-  updateHolidays: (data) => api.patch('/api/settings/holidays/', data),
+  getHolidays: (params) => api.get('/settings/holidays/', { params }),
+  updateHolidays: (data) => api.patch('/settings/holidays/', data),
 };
 
 export default api;
