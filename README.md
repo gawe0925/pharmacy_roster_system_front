@@ -1,4 +1,3 @@
-English Version
 Overview
 
 Pharmacy_roster_system_front is the frontend application for the main scheduling system Pharmacy_roster_system_backend.
