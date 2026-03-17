@@ -1,7 +1,7 @@
 English Version
 Overview
 
-Pharmacy_roster_system_front is the frontend application for the main scheduling system Shift.
+Pharmacy_roster_system_front is the frontend application for the main scheduling system Pharmacy_roster_system_backend.
 It is built using React (with AI assisted development) and is designed to provide a user-friendly interface for managing shifts, viewing schedules and interacting with the backend API.
 
 Features
