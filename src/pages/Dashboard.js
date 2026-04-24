@@ -140,8 +140,9 @@ const Dashboard = () => {
 
   // 獲取班次時間信息
   const getShiftTimeInfo = (shiftName) => {
+    // 加上 shiftName && 確保它不是空值
     const shiftType = shiftTypes.find(type => 
-      type.shift_name === shiftName || shiftName.includes(type.shift_name)
+      type.shift_name === shiftName || (shiftName && typeof shiftName === 'string' && shiftName.includes(type.shift_name))
     );
     
     if (shiftType) {
