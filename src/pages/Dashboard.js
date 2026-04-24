@@ -140,13 +140,18 @@ const Dashboard = () => {
 
   // 獲取班次時間信息
   const getShiftTimeInfo = (shiftName) => {
-    const shiftType = shiftTypes.find(type => {
-      // 1. 先把 shiftName 轉成字串，如果它是空的就給它空字串 ""
-      const nameStr = String(shiftName || "");
-      const targetTypeStr = String(type.shift_name || "");
+    // 1. 先確認 shiftTypes 存在且是陣列，否則直接回傳 null
+    if (!shiftTypes || !Array.isArray(shiftTypes)) {
+      console.warn("shiftTypes 尚未加載或格式錯誤", shiftTypes);
+      return null;
+    }
 
-      // 2. 進行比對
-      return targetTypeStr === nameStr || nameStr.includes(targetTypeStr);
+    const shiftType = shiftTypes.find(type => {
+      // 2. 確保 type 存在且有 shift_name
+      const typeName = String(type?.shift_name || "");
+      const inputName = String(shiftName || "");
+
+      return typeName === inputName || inputName.includes(typeName);
     });
     
     if (shiftType) {
@@ -156,6 +161,8 @@ const Dashboard = () => {
         shiftName: shiftType.shift_name
       };
     }
+    return null; // 如果找不到，優雅地回傳 null
+  };
     
     return {
       startTime: '',
