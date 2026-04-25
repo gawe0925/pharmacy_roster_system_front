@@ -140,38 +140,27 @@ const Dashboard = () => {
 
   // 獲取班次時間信息
   const getShiftTimeInfo = (shiftName) => {
-      // 1. 先確認 shiftTypes 存在且是陣列，否則直接回傳預設值
-      if (!shiftTypes || !Array.isArray(shiftTypes)) {
-        console.warn("shiftTypes 尚未加載或格式錯誤", shiftTypes);
-        return {
-          startTime: '',
-          endTime: '',
-          shiftName: shiftName
-        };
-      }
+    // 防呆：確保 shiftName 是字串
+    const safeShiftName = shiftName != null ? String(shiftName) : '';
 
-      const shiftType = shiftTypes.find(type => {
-        // 2. 確保 type 存在且有 shift_name
-        const typeName = String(type?.shift_name || "");
-        const inputName = String(shiftName || "");
-        return typeName === inputName || inputName.includes(typeName);
-      });
-      
-      if (shiftType) {
-        return {
-          startTime: formatTime(shiftType.start_time),
-          endTime: formatTime(shiftType.end_time),
-          shiftName: shiftType.shift_name
-        };
-      }
-
-      // 3. 如果找不到匹配的班次，回傳預設的空值物件（確保前端渲染不崩潰）
+    const shiftType = shiftTypes.find(type => 
+      type.shift_name === safeShiftName || safeShiftName.includes(type.shift_name)
+    );
+    
+    if (shiftType) {
       return {
-        startTime: '',
-        endTime: '',
-        shiftName: shiftName
+        startTime: formatTime(shiftType.start_time),
+        endTime: formatTime(shiftType.end_time),
+        shiftName: shiftType.shift_name
       };
+    }
+    
+    return {
+      startTime: '',
+      endTime: '',
+      shiftName: safeShiftName
     };
+  };
 
   if (loading) {
     return (
