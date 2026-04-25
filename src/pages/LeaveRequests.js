@@ -29,6 +29,7 @@ const LeaveRequests = () => {
         start_time: '',
         end_time: ''
     });
+    const [createError, setCreateError] = useState('');
 
     // 檢查用戶是否有請假權限 [3]
     const canAccessLeaveRequests = () => {
@@ -152,48 +153,57 @@ const LeaveRequests = () => {
 
     // 處理表單輸入變更 [11]
     const handleCreateFormChange = (field, value) => {
-        // 修正後的防呆：限制年份位數，防止 202605 這種五位數年份 [Bug Fix]
-        if ((field === 'start_date' || field === 'end_date') && value.includes('-')) {
-            const yearPart = value.split('-');
-            if (yearPart.length > 4) return; // 物理攔截
-        }
-
         const updatedForm = { ...createForm, [field]: value };
 
-        // 當日期改變時，重置時間相關選項 [11]
+        // 日期欄位：年份超過 4 位直接擋掉
         if (field === 'start_date' || field === 'end_date') {
-            updatedForm.start_time = '';
-            updatedForm.end_time = '';
-            updatedForm.is_full_day = true;
-        }
-
-        if (field === 'start_date') {
-            const today = new Date().toISOString().split('T');
-            // 修正後的日期判斷：只有 10 碼完整時才提示，且不 return 阻斷更新 [12]
-            if (value.length === 10 && value < today) {
-                alert(t('cannotSelectPastDate') || '不能選擇過去的日期');
+            if (value.includes('-')) {
+                const yearPart = value.split('-')[0];
+                if (yearPart.length > 4) return; // 擋掉超過 4 位的年份
             }
         }
 
-        // 結束日期防呆：輸入完 10 碼後檢查
-        if (field === 'end_date' && value.length === 10 && updatedForm.start_date && value < updatedForm.start_date) {
-            alert('結束日期不能早於開始日期！');
-        }
-
-        // 當切換整天/指定時間時，重置時間 [12]
+        // is_full_day 切換時清空時間
         if (field === 'is_full_day') {
             updatedForm.start_time = '';
             updatedForm.end_time = '';
         }
 
-        // 重新計算請假時數 [12]
-        if (updatedForm.start_date && updatedForm.end_date && updatedForm.start_date.length === 10 && updatedForm.end_date.length === 10) {
+        // 計算時數（只有兩個日期都是完整 10 位才算）
+        if (
+            updatedForm.start_date?.length === 10 &&
+            updatedForm.end_date?.length === 10
+        ) {
+            const today = new Date().toISOString().split('T')[0];
+
+            // 輸入完整日期後才做邏輯檢查
+            if (field === 'start_date' && value.length === 10) {
+                if (value < today) {
+                    setCreateError(t('cannotSelectPastDate') || '開始日期不能是過去的日期');
+                } else {
+                    setCreateError('');
+                }
+            }
+
+            if (field === 'end_date' && value.length === 10) {
+                if (value < today) {
+                    setCreateError('結束日期不能是過去的日期');
+                    setCreateForm(updatedForm);
+                    return;
+                } else if (updatedForm.start_date && value < updatedForm.start_date) {
+                    setCreateError('結束日期不能早於開始日期');
+                    setCreateForm(updatedForm);
+                    return;
+                } else {
+                    setCreateError('');
+                }
+            }
+
             const isSameDay = updatedForm.start_date === updatedForm.end_date;
             if (isSameDay) {
                 if (updatedForm.is_full_day) {
                     updatedForm.leave_hours = 8;
                 } else if (updatedForm.start_time && updatedForm.end_time) {
-                    // 計算指定時間的小時數 [13]
                     const startDateTime = new Date(`${updatedForm.start_date}T${updatedForm.start_time}`);
                     const endDateTime = new Date(`${updatedForm.end_date}T${updatedForm.end_time}`);
                     const diffInHours = (endDateTime - startDateTime) / (1000 * 60 * 60);
@@ -202,15 +212,12 @@ const LeaveRequests = () => {
                     updatedForm.leave_hours = 0;
                 }
             } else {
-                // 多天請假：計算工作日天數 [14]
-                const startDate = new Date(updatedForm.start_date);
-                const endDate = new Date(updatedForm.end_date);
                 let totalHours = 0;
-                const currentDate = new Date(startDate);
+                const currentDate = new Date(updatedForm.start_date);
+                const endDate = new Date(updatedForm.end_date);
                 while (currentDate <= endDate) {
-                    // 跳過週末（正職不上假日班） [15]
                     if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-                        totalHours += 8; // 每個工作日8小時 [15]
+                        totalHours += 8;
                     }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
@@ -219,6 +226,7 @@ const LeaveRequests = () => {
         } else {
             updatedForm.leave_hours = 0;
         }
+
         setCreateForm(updatedForm);
     };
 
@@ -259,7 +267,7 @@ const LeaveRequests = () => {
             }
 
             // 提交前最終日期檢查
-            const today = new Date().toISOString().split('T');
+            const today = new Date().toISOString().split('T')[0];
             if (createForm.start_date < today) {
                 alert(t('startDateCannotBeEarlier') || '開始日期不能早於今天');
                 return;
@@ -330,7 +338,7 @@ const LeaveRequests = () => {
                 end_time: ''
             });
             setShowCreateModal(false);
-            // 重新載入數據 [23]
+            setCreateError('');
             await loadLeaveRequests();
             await loadLeaveBalance(); // 重新載入餘額
             alert(t('messageCreateSuccess') || '請假申請已提交');
@@ -762,7 +770,7 @@ const LeaveRequests = () => {
                                         type="date"
                                         value={createForm.start_date}
                                         onChange={(e) => handleCreateFormChange('start_date', e.target.value)}
-                                        min={new Date().toISOString().split('T')}
+                                        min={new Date().toISOString().split('T')[0]}
                                         className="form-input"
                                     />
                                 </div>
@@ -772,7 +780,7 @@ const LeaveRequests = () => {
                                         type="date"
                                         value={createForm.end_date}
                                         onChange={(e) => handleCreateFormChange('end_date', e.target.value)}
-                                        min={createForm.start_date || new Date().toISOString().split('T')}
+                                        min={createForm.start_date || new Date().toISOString().split('T')[0]}
                                         className="form-input"
                                     />
                                 </div>
@@ -870,6 +878,12 @@ const LeaveRequests = () => {
                             </div>
                         </div>
                         <div className="modal-footer">
+                            {/* 日期驗證錯誤提示 */}
+                            {createError && (
+                                <div className="error-message" style={{ width: '100%', marginBottom: '8px', color: '#EF5350' }}>
+                                    ⚠️ {createError}
+                                </div>
+                            )}
                             {/* 修正後的按鈕樣式：btn-secondary [34] */}
                             <button
                                 className="btn-secondary"
