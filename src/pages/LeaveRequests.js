@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { leaveRequestAPI, leaveBalanceAPI } from '../services/api';
 import LanguageSwitch from '../components/LanguageSwitch';
@@ -6,6 +6,112 @@ import '../styles/LeaveRequests.css';
 // 依照要求僅移除未使用的組件匯入，以修復 Vercel 編譯錯誤 [1]
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+
+// 自訂日期輸入元件：年份最多4位，填完自動跳下一格
+const DateInput = ({ value, onChange }) => {
+    const yearRef = useRef(null);
+    const monthRef = useRef(null);
+    const dayRef = useRef(null);
+
+    const parts = value ? value.split('-') : ['', '', ''];
+    const yearVal = parts[0] || '';
+    const monthVal = parts[1] || '';
+    const dayVal = parts[2] || '';
+
+    const buildDate = (y, m, d) => {
+        if (y.length === 4 && m.length === 2 && d.length === 2) {
+            return `${y}-${m}-${d}`;
+        }
+        return `${y}-${m}-${d}`;
+    };
+
+    const handleYear = (e) => {
+        const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+        onChange(buildDate(val, monthVal, dayVal));
+        if (val.length === 4) monthRef.current?.focus();
+    };
+
+    const handleMonth = (e) => {
+        let val = e.target.value.replace(/\D/g, '').slice(0, 2);
+        if (val.length === 2 && parseInt(val) > 12) val = '12';
+        if (val.length === 2 && parseInt(val) < 1) val = '01';
+        onChange(buildDate(yearVal, val, dayVal));
+        if (val.length === 2) dayRef.current?.focus();
+    };
+
+    const handleDay = (e) => {
+        let val = e.target.value.replace(/\D/g, '').slice(0, 2);
+        if (val.length === 2 && parseInt(val) > 31) val = '31';
+        if (val.length === 2 && parseInt(val) < 1) val = '01';
+        onChange(buildDate(yearVal, monthVal, val));
+    };
+
+    const handleMonthKey = (e) => {
+        if (e.key === 'Backspace' && monthVal === '') yearRef.current?.focus();
+    };
+    const handleDayKey = (e) => {
+        if (e.key === 'Backspace' && dayVal === '') monthRef.current?.focus();
+    };
+
+    const inputStyle = {
+        border: 'none',
+        outline: 'none',
+        background: 'transparent',
+        textAlign: 'center',
+        fontSize: 'inherit',
+        fontFamily: 'inherit',
+        color: 'inherit',
+        padding: '0',
+    };
+
+    return (
+        <div
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px',
+                cursor: 'text',
+            }}
+            className="form-input"
+            onClick={() => yearRef.current?.focus()}
+        >
+            <input
+                ref={yearRef}
+                type="text"
+                inputMode="numeric"
+                value={yearVal}
+                onChange={handleYear}
+                placeholder="YYYY"
+                maxLength={4}
+                style={{ ...inputStyle, width: '40px' }}
+            />
+            <span style={{ color: '#999', userSelect: 'none' }}>/</span>
+            <input
+                ref={monthRef}
+                type="text"
+                inputMode="numeric"
+                value={monthVal}
+                onChange={handleMonth}
+                onKeyDown={handleMonthKey}
+                placeholder="MM"
+                maxLength={2}
+                style={{ ...inputStyle, width: '24px' }}
+            />
+            <span style={{ color: '#999', userSelect: 'none' }}>/</span>
+            <input
+                ref={dayRef}
+                type="text"
+                inputMode="numeric"
+                value={dayVal}
+                onChange={handleDay}
+                onKeyDown={handleDayKey}
+                placeholder="DD"
+                maxLength={2}
+                style={{ ...inputStyle, width: '24px' }}
+            />
+        </div>
+    );
+};
 
 const LeaveRequests = () => {
     const { t } = useLanguage();
@@ -150,6 +256,29 @@ const LeaveRequests = () => {
         }
         return times;
     };
+
+    // 判斷表單是否可以提交
+    const today = new Date().toISOString().split('T')[0];
+    const isFormValid = (() => {
+        if (!createForm.leave_type || !createForm.start_date || !createForm.end_date) return false;
+        if (createForm.start_date.length !== 10 || createForm.end_date.length !== 10) return false;
+        // 年份不能超過 4 位
+        const startYear = createForm.start_date.split('-')[0];
+        const endYear = createForm.end_date.split('-')[0];
+        if (startYear.length !== 4 || endYear.length !== 4) return false;
+        // 不能是過去的日期
+        if (createForm.start_date < today) return false;
+        if (createForm.end_date < today) return false;
+        // 結束不能早於開始
+        if (createForm.end_date < createForm.start_date) return false;
+        // 指定時間時要選完整
+        const isSameDay = createForm.start_date === createForm.end_date;
+        if (isSameDay && !createForm.is_full_day) {
+            if (!createForm.start_time || !createForm.end_time) return false;
+        }
+        if (createError) return false;
+        return true;
+    })();
 
     // 處理表單輸入變更 [11]
     const handleCreateFormChange = (field, value) => {
@@ -766,22 +895,16 @@ const LeaveRequests = () => {
 
                                 <div className="form-group">
                                     <label>{t('labelStartDate') || '開始日期'}:</label>
-                                    <input
-                                        type="date"
+                                    <DateInput
                                         value={createForm.start_date}
-                                        onChange={(e) => handleCreateFormChange('start_date', e.target.value)}
-                                        min={new Date().toISOString().split('T')[0]}
-                                        className="form-input"
+                                        onChange={(val) => handleCreateFormChange('start_date', val)}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>{t('labelEndDate') || '結束日期'}:</label>
-                                    <input
-                                        type="date"
+                                    <DateInput
                                         value={createForm.end_date}
-                                        onChange={(e) => handleCreateFormChange('end_date', e.target.value)}
-                                        min={createForm.start_date || new Date().toISOString().split('T')[0]}
-                                        className="form-input"
+                                        onChange={(val) => handleCreateFormChange('end_date', val)}
                                     />
                                 </div>
 
@@ -888,6 +1011,8 @@ const LeaveRequests = () => {
                             <button
                                 className="btn-secondary"
                                 onClick={handleCreateLeaveRequest}
+                                disabled={!isFormValid}
+                                style={{ opacity: isFormValid ? 1 : 0.5, cursor: isFormValid ? 'pointer' : 'not-allowed' }}
                             >
                                 ✅ {t('actionSubmit') || '提交'}
                             </button>
