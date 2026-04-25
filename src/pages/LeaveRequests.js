@@ -3,16 +3,15 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { leaveRequestAPI, leaveBalanceAPI } from '../services/api';
 import LanguageSwitch from '../components/LanguageSwitch';
 import '../styles/LeaveRequests.css';
-// 依照要求僅移除未定義的 DateTimeSelector 以防部署報錯
+// 依照要求僅移除未使用的組件匯入，以修復 Vercel 編譯錯誤 [1]
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const LeaveRequests = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const { user } = useAuth();
 
-    // [7] 狀態定義
+    const { user } = useAuth();
     const [leaveRequests, setLeaveRequests] = useState([]);
     const [leaveBalance, setLeaveBalance] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,7 +21,6 @@ const LeaveRequests = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [createForm, setCreateForm] = useState({
         leave_type: '',
-        // [8] 表單初始值
         start_date: '',
         end_date: '',
         reason: '',
@@ -32,39 +30,40 @@ const LeaveRequests = () => {
         end_time: ''
     });
 
-    // 檢查用戶是否有請假權限
+    // 檢查用戶是否有請假權限 [3]
     const canAccessLeaveRequests = () => {
         return user?.position_type === 'full' || user?.position_type === 'part' || user?.position_type === 'admin';
     };
 
-    // 檢查用戶是否可以審核請假
+    // 檢查用戶是否可以審核請假 [3]
     const canReviewLeaveRequests = () => {
         return user?.is_staff === true;
     };
 
-    // [9] 修正後的申請人判定邏輯：確保只有「名」時能正確顯示 Mark
+    // 檢查是否為自己的請假申請 [3]
     const isOwnRequest = (request) => {
         if (!user || !request) return false;
+        // 修正後的用戶姓名比較邏輯：確保只有「名」時也能顯示 Mark [4]
         const currentUserName = user.first_name || user.last_name
             ? (user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : (user.first_name || user.last_name))
             : user.name || user.username || user.email;
         return request.staff === currentUserName;
     };
 
-    // 檢查是否可以取消請假申請
+    // 檢查是否可以取消請假申請 [4]
     const canCancelRequest = (request) => {
         if (!isOwnRequest(request)) return false;
         return request.status === 'pending' || request.status === 'approved';
     };
 
-    // [10] 檢查是否可以審核請假申請
+    // 檢查是否可以審核請假申請 [5]
     const canReviewRequest = (request) => {
         if (!canReviewLeaveRequests()) return false;
-        if (isOwnRequest(request)) return false;
+        if (isOwnRequest(request)) return false; // 不能審核自己的申請
         return request.status === 'pending';
     };
 
-    // 請假類型映射
+    // 請假類型映射 [5]
     const leaveTypeMap = {
         'annual': t('leaveTypeAnnual'),
         'sick': t('leaveTypeSick'),
@@ -75,7 +74,7 @@ const LeaveRequests = () => {
         '': t('leaveTypeNotSpecified')
     };
 
-    // [11] 狀態映射
+    // 狀態映射 [6]
     const statusMap = {
         'pending': { label: t('statusPending'), color: '#FFA726' },
         'approved': { label: t('statusApproved'), color: '#66BB6A' },
@@ -83,7 +82,7 @@ const LeaveRequests = () => {
         'canceled': { label: t('statusCanceled'), color: '#9E9E9E' }
     };
 
-    // 獲取可用假期時數的函數
+    // 獲獲可用假期時數的函數 [6]
     const getAvailableHours = (leaveType) => {
         if (!leaveBalance) return 0;
         switch (leaveType) {
@@ -96,35 +95,42 @@ const LeaveRequests = () => {
         }
     };
 
-    // [12] 計算扣除後剩餘時數
+    // 計算扣除後剩餘時數 [7]
     const getRemainingHours = (leaveType, deductHours) => {
         const available = getAvailableHours(leaveType);
         return Math.max(0, available - deductHours);
     };
 
-    // 完整保留原始計算請假時數的函數排版
+    // 計算請假時數的函數 [7]
     const calculateLeaveHours = (startDate, endDate, isFullDay = true, startTime = '', endTime = '') => {
         if (!startDate || !endDate) return 0;
         const start = new Date(startDate);
         const end = new Date(endDate);
+        // 檢查是否為同一天 [8]
         const isSameDay = start.toDateString() === end.toDateString();
         if (isSameDay) {
+            // 同一天請假 [8]
             if (isFullDay) {
+                // 整天 = 8小時 [8]
                 return 8;
             } else {
+                // 指定時間段 [8]
                 if (!startTime || !endTime) return 0;
                 const startDateTime = new Date(`${startDate}T${startTime}`);
                 const endDateTime = new Date(`${endDate}T${endTime}`);
                 if (startDateTime >= endDateTime) return 0;
+                // 計算具體時間段的小時數 [9]
                 const diffInHours = (endDateTime - startDateTime) / (1000 * 60 * 60);
                 return Math.round(diffInHours * 100) / 100;
             }
         } else {
+            // 多天請假，自動按工作日計算 [9]
             let totalHours = 0;
             const currentDate = new Date(start);
             while (currentDate <= end) {
+                // 跳過週末（正職不上假日班） [10]
                 if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-                    totalHours += 8;
+                    totalHours += 8; // 每個工作日8小時 [10]
                 }
                 currentDate.setDate(currentDate.getDate() + 1);
             }
@@ -132,59 +138,62 @@ const LeaveRequests = () => {
         }
     };
 
-    // [13] 獲取時間選項函數
+    // 獲取時間選項函數 [10]
     const getTimeOptions = (startTime = null) => {
         const times = [];
         for (let hour = 8; hour <= 20; hour++) {
             const timeStr = hour.toString().padStart(2, '0') + ':00';
+            // 如果有開始時間，結束時間要晚於開始時間 [11]
             if (startTime && timeStr <= startTime) continue;
             times.push(timeStr);
         }
         return times;
     };
 
-    // [1] 修正後的表單輸入變更處理：徹底解決手動輸入爆炸問題
+    // 處理表單輸入變更 [11]
     const handleCreateFormChange = (field, value) => {
-        // 防呆 1：限制年份長度，防止輸入 202605 這種五位數年份 [Bug Fix]
-        if (value.includes('-')) {
+        // 修正後的防呆：限制年份位數，防止 202605 這種五位數年份 [Bug Fix]
+        if ((field === 'start_date' || field === 'end_date') && value.includes('-')) {
             const yearPart = value.split('-');
-            if (yearPart.length > 4) return;
+            if (yearPart.length > 4) return; // 物理攔截
         }
 
         const updatedForm = { ...createForm, [field]: value };
 
-        // [2] 防呆 2：當日期改變時，只有當字串完整 (10碼) 才進行提示，且「不中斷更新狀態」
-        if (value.length === 10) {
-            const today = new Date().toISOString().split('T');
-            if (field === 'start_date' && value < today) {
-                alert(t('cannotSelectPastDate') || '不能選擇過去的日期');
-                // 不再 return，確保狀態能被更新，讓 user 看得到自己打的字
-            }
-            if (field === 'end_date' && updatedForm.start_date && value < updatedForm.start_date) {
-                alert('結束日期不能早於開始日期！');
-            }
-        }
-
-        // 當日期改變時，重置時間相關選項
+        // 當日期改變時，重置時間相關選項 [11]
         if (field === 'start_date' || field === 'end_date') {
             updatedForm.start_time = '';
             updatedForm.end_time = '';
             updatedForm.is_full_day = true;
         }
 
-        // 當切換整天/指定時間時，重置時間
+        if (field === 'start_date') {
+            const today = new Date().toISOString().split('T');
+            // 修正後的日期判斷：只有 10 碼完整時才提示，且不 return 阻斷更新 [12]
+            if (value.length === 10 && value < today) {
+                alert(t('cannotSelectPastDate') || '不能選擇過去的日期');
+            }
+        }
+
+        // 結束日期防呆：輸入完 10 碼後檢查
+        if (field === 'end_date' && value.length === 10 && updatedForm.start_date && value < updatedForm.start_date) {
+            alert('結束日期不能早於開始日期！');
+        }
+
+        // 當切換整天/指定時間時，重置時間 [12]
         if (field === 'is_full_day') {
             updatedForm.start_time = '';
             updatedForm.end_time = '';
         }
 
-        // [3, 14, 15] 重新計算請假時數
+        // 重新計算請假時數 [12]
         if (updatedForm.start_date && updatedForm.end_date && updatedForm.start_date.length === 10 && updatedForm.end_date.length === 10) {
             const isSameDay = updatedForm.start_date === updatedForm.end_date;
             if (isSameDay) {
                 if (updatedForm.is_full_day) {
                     updatedForm.leave_hours = 8;
                 } else if (updatedForm.start_time && updatedForm.end_time) {
+                    // 計算指定時間的小時數 [13]
                     const startDateTime = new Date(`${updatedForm.start_date}T${updatedForm.start_time}`);
                     const endDateTime = new Date(`${updatedForm.end_date}T${updatedForm.end_time}`);
                     const diffInHours = (endDateTime - startDateTime) / (1000 * 60 * 60);
@@ -193,13 +202,15 @@ const LeaveRequests = () => {
                     updatedForm.leave_hours = 0;
                 }
             } else {
+                // 多天請假：計算工作日天數 [14]
                 const startDate = new Date(updatedForm.start_date);
                 const endDate = new Date(updatedForm.end_date);
                 let totalHours = 0;
                 const currentDate = new Date(startDate);
                 while (currentDate <= endDate) {
+                    // 跳過週末（正職不上假日班） [15]
                     if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-                        totalHours += 8;
+                        totalHours += 8; // 每個工作日8小時 [15]
                     }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
@@ -211,31 +222,35 @@ const LeaveRequests = () => {
         setCreateForm(updatedForm);
     };
 
-    // [16] 載入請假餘額數據
+    // 載入請假餘額數據 [16]
     const loadLeaveBalance = async () => {
         try {
             const response = await leaveBalanceAPI.get();
             console.log('Leave balance response:', response.data);
+            // 處理 API 回應格式 [16]
             let balanceData = null;
             if (response.data) {
                 if (Array.isArray(response.data) && response.data.length > 0) {
+                    // 如果是數組，取第一個（當前用戶的數據） [16]
                     balanceData = response.data;
                 } else if (response.data.staff) {
+                    // 如果直接是對象 [17]
                     balanceData = response.data;
                 }
             }
             setLeaveBalance(balanceData);
         } catch (error) {
             console.error('載入請假餘額失敗:', error);
+            // 設置默認值避免錯誤 [17]
             setLeaveBalance({
-                staff: user?.first_name || user?.name || 'Unknown',
+                staff: user?.name || 'Unknown',
                 available_annual_leave_hours: '0.00',
                 available_sick_leave_hours: '0.00'
             });
         }
     };
 
-    // [17] 提交新請假申請邏輯 (含最後防呆)
+    // 提交新請假申請 [17]
     const handleCreateLeaveRequest = async () => {
         try {
             if (!createForm.leave_type || !createForm.start_date || !createForm.end_date) {
@@ -243,26 +258,27 @@ const LeaveRequests = () => {
                 return;
             }
 
-            // 提交前的最終日期檢查
+            // 提交前最終日期檢查
             const today = new Date().toISOString().split('T');
             if (createForm.start_date < today) {
-                alert(t('startDateCannotBeEarlier') || '無法提交：開始日期不能早於今天');
+                alert(t('startDateCannotBeEarlier') || '開始日期不能早於今天');
                 return;
             }
             if (createForm.end_date < createForm.start_date) {
-                alert('無法提交：結束日期不能早於開始日期');
+                alert('結束日期不能早於開始日期');
                 return;
             }
 
+            // 檢查假期餘額 [18]
             if (createForm.leave_type === 'annual' || createForm.leave_type === 'sick') {
                 const availableHours = getAvailableHours(createForm.leave_type);
                 if (createForm.leave_hours > availableHours) {
                     const leaveTypeName = createForm.leave_type === 'annual' ? t('leaveTypeAnnual') : t('leaveTypeSick');
-                    alert(`${leaveTypeName}${t('insufficientBalance')}！${t('availableHours')}：${availableHours}，${t('requestedHours')}：${createForm.leave_hours}`);
+                    alert(`${leaveTypeName}${t('insufficientBalance') || '餘額不足'}！${t('availableHours') || '您可用時數'}：${availableHours} ${t('messageHours')}，${t('requestedHours') || '申請時數'}：${createForm.leave_hours} ${t('messageHours')}`);
                     return;
                 }
             }
-
+            // 如果是同一天且選擇指定時間，檢查時間是否選擇完整 [19]
             const isSameDay = createForm.start_date === createForm.end_date;
             if (isSameDay && !createForm.is_full_day) {
                 if (!createForm.start_time || !createForm.end_time) {
@@ -270,7 +286,24 @@ const LeaveRequests = () => {
                     return;
                 }
             }
+            // 檢查日期範圍內是否包含週末 [20]
+            const startDate = new Date(createForm.start_date);
+            const endDate = new Date(createForm.end_date);
+            const currentDate = new Date(startDate);
+            let hasWeekend = false;
+            while (currentDate <= endDate) {
+                if (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+                    hasWeekend = true;
+                    break;
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            if (hasWeekend) {
+                alert(t('weekendNotAllowed') || '正職員工假日不用上班，請假日期不能包含週末');
+                return;
+            }
 
+            // 準備提交的數據 [21]
             const submitData = {
                 leave_type: createForm.leave_type,
                 start_date: createForm.start_date,
@@ -278,15 +311,14 @@ const LeaveRequests = () => {
                 reason: createForm.reason,
                 leave_hours: createForm.leave_hours
             };
-
+            // 如果是同一天且指定時間，添加時間信息到日期字符串中 [22]
             if (isSameDay && !createForm.is_full_day) {
                 submitData.start_date = `${createForm.start_date}T${createForm.start_time}`;
                 submitData.end_date = `${createForm.end_date}T${createForm.end_time}`;
             }
-
             console.log('Creating leave request:', submitData);
             await leaveRequestAPI.create(submitData);
-            // [18] 重置並關閉
+            // 重置表單並關閉模態框 [23]
             setCreateForm({
                 leave_type: '',
                 start_date: '',
@@ -298,12 +330,13 @@ const LeaveRequests = () => {
                 end_time: ''
             });
             setShowCreateModal(false);
+            // 重新載入數據 [23]
             await loadLeaveRequests();
-            await loadLeaveBalance();
+            await loadLeaveBalance(); // 重新載入餘額
             alert(t('messageCreateSuccess') || '請假申請已提交');
         } catch (error) {
             console.error('建立請假申請失敗:', error);
-            alert(`${t('messageCreateFailed')}: ${error.response?.data?.message || error.message}`);
+            alert(`${t('messageCreateFailed') || '建立失敗'}: ${error.response?.data?.message || error.message}`);
         }
     };
 
@@ -311,96 +344,159 @@ const LeaveRequests = () => {
         try {
             setLoading(true);
             const response = await leaveRequestAPI.list();
-            let requestsData = response.data.results || (Array.isArray(response.data) ? response.data : [response.data]);
+            let requestsData = [];
+            if (response.data) {
+                if (response.data.results) {
+                    requestsData = response.data.results;
+                } else if (Array.isArray(response.data)) {
+                    requestsData = response.data;
+                } else {
+                    requestsData = [response.data];
+                }
+            }
             setLeaveRequests(requestsData);
+        } catch (error) {
+            console.error('載入請假申請失敗:', error);
         } finally {
             setLoading(false);
         }
     };
 
+    // 處理狀態變更（審核） [24]
     const handleStatusChange = async (requestId, newStatus) => {
         try {
-            console.log('Request ID:', requestId, 'New status:', newStatus);
+            console.log('Request ID:', requestId);
+            console.log('New status:', newStatus);
             await leaveRequestAPI.update(requestId, { status: newStatus });
             await loadLeaveRequests();
-            await loadLeaveBalance();
+            await loadLeaveBalance(); // 重新載入餘額
             setShowModal(false);
             setSelectedRequest(null);
         } catch (error) {
+            console.error('更新狀態詳細錯誤:', error);
+            console.error('錯誤回應:', error.response);
             alert(`${t('messageUpdateFailed')}: ${error.message}`);
         }
     };
 
+    // 處理取消請假申請 [25]
     const handleCancelRequest = async (request) => {
         try {
             const confirmMessage = t('confirmCancelRequest') || '確定要取消這個請假申請嗎？';
-            if (!window.confirm(confirmMessage)) return;
+            if (!window.confirm(confirmMessage)) {
+                return;
+            }
+            console.log('Cancelling request ID:', request.id);
             await leaveRequestAPI.update(request.id, { status: 'canceled' });
             await loadLeaveRequests();
-            await loadLeaveBalance();
-            alert(t('messageCancelSuccess'));
+            await loadLeaveBalance(); // 重新載入餘額
+            alert(t('messageCancelSuccess') || '請假申請已取消');
         } catch (error) {
-            alert(t('messageCancelFailed'));
+            console.error('取消請假申請失敗:', error);
+            alert(`${t('messageCancelFailed') || '取消失敗'}: ${error.response?.data?.message || error.message}`);
         }
     };
 
-    // [19] 獲取假期餘額信息
+    const filteredRequests = leaveRequests.filter(request => {
+        if (selectedStatus === 'all') return true;
+        return request.status === selectedStatus;
+    });
+
+    // 獲取假期餘額信息 [26]
     const getLeaveBalanceInfo = () => {
-        if (!leaveBalance) return { annual: { available: 0 }, sick: { available: 0 } };
+        if (!leaveBalance) {
+            return {
+                annual: { available: 0 },
+                sick: { available: 0 }
+            };
+        }
+        const annualAvailable = parseFloat(leaveBalance.available_annual_leave_hours || 0);
+        const sickAvailable = parseFloat(leaveBalance.available_sick_leave_hours || 0);
         return {
-            annual: { available: parseFloat(leaveBalance.available_annual_leave_hours || 0) },
-            sick: { available: parseFloat(leaveBalance.available_sick_leave_hours || 0) }
+            annual: { available: annualAvailable },
+            sick: { available: sickAvailable }
         };
     };
 
     const leaveBalanceInfo = getLeaveBalanceInfo();
 
+    // useEffect 修改：同時載入請假申請和餘額 [27]
     useEffect(() => {
         if (user) {
             if (!canAccessLeaveRequests()) {
-                alert(t('noLeavePermission'));
+                alert(t('noLeavePermission') || '您的職位類型無法使用請假功能');
                 navigate('/dashboard');
                 return;
             }
-            Promise.all([loadLeaveRequests(), loadLeaveBalance()]);
+            // 並行載入數據 [27]
+            Promise.all([
+                loadLeaveRequests(),
+                loadLeaveBalance()
+            ]);
         }
     }, [user, navigate]);
 
-    // [20-22] 權限檢查渲染
+    // 權限檢查渲染 [27]
     if (user && !canAccessLeaveRequests()) {
         return (
             <div className="leave-requests">
                 <div className="page-header">
                     <div className="header-content">
                         <div className="header-left">
-                            <button className="btn-secondary" onClick={() => navigate('/dashboard')}>← {t('backToDashboard')}</button>
-                            <h1 className="page-title"><span className="title-icon">📋</span>{t('leaveRequestsTitle')}</h1>
+                            <button
+                                className="btn-secondary"
+                                onClick={() => navigate('/dashboard')}
+                            >
+                                ← {t('backToDashboard')}
+                            </button>
+                            <h1 className="page-title">
+                                <span className="title-icon">📋</span>
+                                {t('leaveRequestsTitle')}
+                            </h1>
                         </div>
-                        <div className="header-actions"><LanguageSwitch /></div>
+                        <div className="header-actions">
+                            <LanguageSwitch />
+                        </div>
                     </div>
                 </div>
                 <div className="no-permission">
                     <div className="no-permission-icon">🚫</div>
-                    <h3>{t('accessDenied')}</h3>
-                    <p>{t('leavePermissionMessage')}</p>
-                    <button className="btn-primary" onClick={() => navigate('/dashboard')}>{t('backToDashboard')}</button>
+                    <h3>{t('accessDenied') || '無法訪問'}</h3>
+                    <p>{t('leavePermissionMessage') || '只有正職員工和兼職員工可以使用請假功能'}</p>
+                    <button
+                        className="btn-primary"
+                        onClick={() => navigate('/dashboard')}
+                    >
+                        {t('backToDashboard')}
+                    </button>
                 </div>
             </div>
         );
     }
 
-    if (loading) return <div className="leave-requests-loading"><div className="loading-spinner"></div><p>{t('messageLoading')}</p></div>;
+    if (loading) {
+        return (
+            <div className="leave-requests-loading">
+                <div className="loading-spinner"></div>
+                <p>{t('messageLoading')}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="leave-requests">
+            {/* 頁面標題區域 - 顯示當前用戶姓名 [28] */}
             <div className="page-header">
                 <div className="header-content">
                     <div className="page-title-section">
-                        <h1 className="page-title"><span className="title-icon">📋</span>{t('leaveRequestsTitle')}</h1>
+                        <h1 className="page-title">
+                            <span className="title-icon">📋</span>
+                            {t('leaveRequestsTitle')}
+                        </h1>
                         <div className="user-info">
                             <span className="user-label">{t('applicant') || '申請人'}：</span>
                             <span className="user-name">
-                                {/* [4] 修正後的名稱判定邏輯：優先顯示 Mark */}
+                                {/* 修正後的 Mark 顯示邏輯 [29] */}
                                 {user?.first_name || user?.last_name
                                     ? (user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : (user.first_name || user.last_name))
                                     : user?.name || user?.username || user?.email || t('unknownUser') || '未知用戶'
@@ -410,65 +506,179 @@ const LeaveRequests = () => {
                     </div>
                     <div className="header-actions">
                         <LanguageSwitch />
-                        {/* [5] 統一按鈕樣式為 btn-secondary */}
-                        <button className="btn-secondary" onClick={() => setShowCreateModal(true)}>➕ {t('actionCreateLeave') || '新增請假'}</button>
-                        <button className="btn-secondary" onClick={() => navigate('/dashboard')}>← {t('backToDashboard')}</button>
+                        <button
+                            className="btn-secondary"
+                            onClick={() => setShowCreateModal(true)}
+                        >
+                            ➕ {t('actionCreateLeave') || '新增請假'}
+                        </button>
+                        <button
+                            className="btn-secondary"
+                            onClick={() => navigate('/dashboard')}
+                        >
+                            ← {t('backToDashboard')}
+                        </button>
                     </div>
                 </div>
             </div>
 
+            {/* 假期餘額顯示區域 [30] */}
             <div className="leave-balance-section">
                 <div className="balance-cards">
                     <div className="balance-card annual">
-                        <div className="balance-header"><span className="balance-icon">🏖️</span><h3>{t('leaveTypeAnnual')}</h3></div>
-                        <div className="balance-content"><div className="balance-item"><span className="balance-label">{t('availableHours')}：</span><span className="balance-value available">{leaveBalanceInfo.annual.available.toFixed(1)} {t('messageHours')}</span></div></div>
+                        <div className="balance-header">
+                            <span className="balance-icon">🏖️</span>
+                            <h3>{t('leaveTypeAnnual') || '年假'}</h3>
+                        </div>
+                        <div className="balance-content">
+                            <div className="balance-item">
+                                <span className="balance-label">{t('availableHours') || '可用時數'}：</span>
+                                <span className="balance-value available">{leaveBalanceInfo.annual.available.toFixed(1)} {t('messageHours')}</span>
+                            </div>
+                        </div>
                     </div>
                     <div className="balance-card sick">
-                        <div className="balance-header"><span className="balance-icon">🤒</span><h3>{t('leaveTypeSick')}</h3></div>
-                        <div className="balance-content"><div className="balance-item"><span className="balance-label">{t('availableHours')}：</span><span className="balance-value available">{leaveBalanceInfo.sick.available.toFixed(1)} {t('messageHours')}</span></div></div>
+                        <div className="balance-header">
+                            <span className="balance-icon">🤒</span>
+                            <h3>{t('leaveTypeSick') || '病假'}</h3>
+                        </div>
+                        <div className="balance-content">
+                            <div className="balance-item">
+                                <span className="balance-label">{t('availableHours') || '可用時數'}：</span>
+                                <span className="balance-value available">{leaveBalanceInfo.sick.available.toFixed(1)} {t('messageHours')}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            {/* 狀態篩選器 [31] */}
             <div className="filters-section">
                 <div className="filter-tabs">
                     {[
-                        { key: 'all', label: t('allApplications'), count: leaveRequests.length },
-                        { key: 'pending', label: t('pendingApplications'), count: leaveRequests.filter(r => r.status === 'pending').length },
-                        { key: 'approved', label: t('approvedApplications'), count: leaveRequests.filter(r => r.status === 'approved').length },
-                        { key: 'rejected', label: t('rejectedApplications'), count: leaveRequests.filter(r => r.status === 'rejected').length }
+                        { key: 'all', label: t('allApplications') || '全部申請', count: leaveRequests.length },
+                        { key: 'pending', label: t('pendingApplications') || '待審核', count: leaveRequests.filter(r => r.status === 'pending').length },
+                        { key: 'approved', label: t('approvedApplications') || '已批准', count: leaveRequests.filter(r => r.status === 'approved').length },
+                        { key: 'rejected', label: t('rejectedApplications') || '已拒絕', count: leaveRequests.filter(r => r.status === 'rejected').length }
                     ].map(({ key, label, count }) => (
-                        <button key={key} className={`filter-tab ${selectedStatus === key ? 'active' : ''}`} onClick={() => setSelectedStatus(key)}>
-                            {label} <span className="count-badge">{count}</span>
+                        <button
+                            key={key}
+                            className={`filter-tab ${selectedStatus === key ? 'active' : ''}`}
+                            onClick={() => setSelectedStatus(key)}
+                        >
+                            {label}
+                            <span className="count-badge">{count}</span>
                         </button>
                     ))}
                 </div>
             </div>
 
+            {/* 請假申請列表 [32] */}
             <div className="requests-section">
                 {filteredRequests.length === 0 ? (
-                    <div className="no-requests"><div className="no-requests-icon">📝</div><h3>{t('messageNoRequests')}</h3></div>
+                    <div className="no-requests">
+                        <div className="no-requests-icon">📝</div>
+                        <h3>{t('messageNoRequests')}</h3>
+                        <p>{t('messageNoRequestsDesc')}</p>
+                    </div>
                 ) : (
                     <div className="requests-list">
                         {filteredRequests.map((request, index) => (
                             <div key={index} className="request-card">
                                 <div className="request-header">
                                     <div className="employee-info">
-                                        <div className="employee-avatar">{request.staff ? request.staff.toUpperCase() : '?'}</div>
-                                        <div className="employee-details"><h3 className="employee-name">{request.staff}</h3>
-                                            <p className="request-date">{t('labelAppliedOn')}: {new Date(request.requested_at).toLocaleDateString()}</p>
+                                        <div className="employee-avatar">
+                                            {request.staff ? request.staff.toUpperCase() : '?'}
+                                        </div>
+                                        <div className="employee-details">
+                                            <h3 className="employee-name">{request.staff || t('messageUnknownEmployee')}</h3>
+                                            <p className="request-date">
+                                                {t('labelAppliedOn')}: {new Date(request.requested_at).toLocaleDateString()}
+                                            </p>
                                         </div>
                                     </div>
-                                    <span className={`status-badge ${request.status}`} style={{ backgroundColor: statusMap[request.status]?.color }}>{statusMap[request.status]?.label}</span>
+                                    <div className="request-status">
+                                        <span
+                                            className={`status-badge ${request.status}`}
+                                            style={{ backgroundColor: statusMap[request.status]?.color }}
+                                        >
+                                            {statusMap[request.status]?.label}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div className="request-content">
-                                    <div className="detail-row"><span className="detail-label">{t('labelLeaveType')}:</span><span className="detail-value">{leaveTypeMap[request.leave_type] || request.leave_type}</span></div>
-                                    <div className="detail-row"><span className="detail-label">{t('labelPeriod')}:</span><span className="detail-value">{request.start_date} ~ {request.end_date}</span></div>
-                                    <div className="detail-row"><span className="detail-label">{t('labelHours')}:</span><span className="detail-value">{request.leave_hours} {t('messageHours')}</span></div>
+                                    <div className="request-details">
+                                        <div className="detail-row">
+                                            <span className="detail-label">{t('labelLeaveType')}:</span>
+                                            <span className="detail-value">
+                                                {leaveTypeMap[request.leave_type] || request.leave_type || t('messageNotSpecified')}
+                                            </span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="detail-label">{t('labelPeriod')}:</span>
+                                            <span className="detail-value">
+                                                {request.start_date} ~ {request.end_date}
+                                            </span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="detail-label">{t('labelHours')}:</span>
+                                            <span className="detail-value">{request.leave_hours} {t('messageHours')}</span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="detail-label">{t('labelStatus') || '狀態'}:</span>
+                                            <span className="detail-value">
+                                                <span
+                                                    className={`status-text ${request.status}`}
+                                                    style={{ color: statusMap[request.status]?.color, fontWeight: '600' }}
+                                                >
+                                                    {statusMap[request.status]?.label}
+                                                </span>
+                                            </span>
+                                        </div>
+                                        {request.reason && (
+                                            <div className="detail-row">
+                                                <span className="detail-label">{t('labelReason')}:</span>
+                                                <span className="detail-value">{request.reason}</span>
+                                            </div>
+                                        )}
+                                        {request.reviewed_at && (
+                                            <div className="detail-row">
+                                                <span className="detail-label">{t('reviewDate') || '審核日期'}：</span>
+                                                <span className="detail-value">
+                                                    {new Date(request.reviewed_at).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="request-actions">
-                                    {canReviewRequest(request) && (<button className="action-btn review-btn" onClick={() => { setSelectedRequest(request); setShowModal(true); }}>📋 {t('actionReview')}</button>)}
-                                    {canCancelRequest(request) && (<button className="action-btn cancel-btn" onClick={() => handleCancelRequest(request)}>❌ {t('actionCancelRequest')}</button>)}
+                                    {canReviewRequest(request) && (
+                                        <button
+                                            className="action-btn review-btn"
+                                            onClick={() => {
+                                                console.log('Selected request:', request);
+                                                setSelectedRequest(request);
+                                                setShowModal(true);
+                                            }}
+                                        >
+                                            📋 {t('actionReview')}
+                                        </button>
+                                    )}
+                                    {canCancelRequest(request) && (
+                                        <button
+                                            className="action-btn cancel-btn"
+                                            onClick={() => handleCancelRequest(request)}
+                                        >
+                                            ❌ {t('actionCancelRequest')}
+                                        </button>
+                                    )}
+                                    {!isOwnRequest(request) && request.status === 'pending' && !canReviewLeaveRequests() && (
+                                        <div className="request-status-info">
+                                            <span className="pending-notice">
+                                                {t('pendingReview') || '等待主管審核'}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -476,44 +686,203 @@ const LeaveRequests = () => {
                 )}
             </div>
 
+            {/* 新增請假模態框 [33] */}
             {showCreateModal && (
                 <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
                     <div className="modal-content create-modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header"><h3>{t('modalCreateLeave')}</h3><button className="modal-close" onClick={() => setShowCreateModal(false)}>×</button></div>
+                        <div className="modal-header">
+                            <h3>{t('modalCreateLeave') || '新增請假申請'}</h3>
+                            <button
+                                className="modal-close"
+                                onClick={() => setShowCreateModal(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
                         <div className="modal-body">
                             <div className="create-form">
                                 <div className="form-group">
                                     <label>{t('labelLeaveType')}:</label>
-                                    <select value={createForm.leave_type} onChange={(e) => handleCreateFormChange('leave_type', e.target.value)} className="form-input">
-                                        <option value="">{t('messagePleaseSelect')}</option>
+                                    <select
+                                        value={createForm.leave_type}
+                                        onChange={(e) => handleCreateFormChange('leave_type', e.target.value)}
+                                        className="form-input"
+                                    >
+                                        <option value="">{t('messagePleaseSelect') || '請選擇'}</option>
                                         <option value="annual">{t('leaveTypeAnnual')}</option>
                                         <option value="sick">{t('leaveTypeSick')}</option>
+                                        <option value="personal">{t('leaveTypePersonal')}</option>
+                                        <option value="maternity">{t('leaveTypeMaternity')}</option>
+                                        <option value="unpaid">{t('leaveTypeUnpaid')}</option>
                                     </select>
                                 </div>
+
                                 {(createForm.leave_type === 'annual' || createForm.leave_type === 'sick') && (
                                     <div className="leave-balance-info">
                                         <div className="balance-display">
-                                            <span className="balance-icon">{createForm.leave_type === 'annual' ? '🏖️' : '🤒'}</span>
-                                            <div className="balance-text"><span>{createForm.leave_type === 'annual' ? t('leaveTypeAnnual') : t('leaveTypeSick')}{t('currentlyAvailable')}：</span><span className="balance-hours">{getAvailableHours(createForm.leave_type).toFixed(1)} {t('messageHours')}</span></div>
+                                            <span className="balance-icon">
+                                                {createForm.leave_type === 'annual' ? '🏖️' : '🤒'}
+                                            </span>
+                                            <div className="balance-text">
+                                                <span className="balance-type">
+                                                    {createForm.leave_type === 'annual' ? t('leaveTypeAnnual') : t('leaveTypeSick')}{t('currentlyAvailable') || '目前可用'}：
+                                                </span>
+                                                <span className="balance-hours current">
+                                                    {getAvailableHours(createForm.leave_type).toFixed(1)} {t('messageHours')}
+                                                </span>
+                                            </div>
                                         </div>
+                                        {createForm.leave_hours > 0 && (
+                                            <div className="balance-calculation">
+                                                <div className="calculation-row">
+                                                    <span className="calc-label">{t('thisApplication') || '本次申請'}：</span>
+                                                    <span className="calc-value request">{createForm.leave_hours.toFixed(1)} {t('messageHours')}</span>
+                                                </div>
+                                                <div className="calculation-divider">－</div>
+                                                <div className="calculation-row result">
+                                                    <span className="calc-label">{t('remainingAfterApplication') || '申請後剩餘'}：</span>
+                                                    <span className={`calc-value remaining ${getRemainingHours(createForm.leave_type, createForm.leave_hours) < 0 ? 'insufficient' : ''}`}>
+                                                        {getRemainingHours(createForm.leave_type, createForm.leave_hours).toFixed(1)} {t('messageHours')}
+                                                    </span>
+                                                </div>
+                                                {getRemainingHours(createForm.leave_type, createForm.leave_hours) < 0 && (
+                                                    <div className="insufficient-warning">
+                                                        <span className="warning-icon">⚠️</span>
+                                                        <span className="warning-text">{t('insufficientBalance') || '餘額不足，無法提交申請'}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
+
                                 <div className="form-group">
-                                    <label>{t('labelStartDate')}:</label>
-                                    <input type="date" value={createForm.start_date} onChange={(e) => handleCreateFormChange('start_date', e.target.value)} className="form-input" min={new Date().toISOString().split('T')} />
+                                    <label>{t('labelStartDate') || '開始日期'}:</label>
+                                    <input
+                                        type="date"
+                                        value={createForm.start_date}
+                                        onChange={(e) => handleCreateFormChange('start_date', e.target.value)}
+                                        min={new Date().toISOString().split('T')}
+                                        className="form-input"
+                                    />
                                 </div>
                                 <div className="form-group">
-                                    <label>{t('labelEndDate')}:</label>
-                                    <input type="date" value={createForm.end_date} onChange={(e) => handleCreateFormChange('end_date', e.target.value)} className="form-input" min={createForm.start_date || new Date().toISOString().split('T')} />
+                                    <label>{t('labelEndDate') || '結束日期'}:</label>
+                                    <input
+                                        type="date"
+                                        value={createForm.end_date}
+                                        onChange={(e) => handleCreateFormChange('end_date', e.target.value)}
+                                        min={createForm.start_date || new Date().toISOString().split('T')}
+                                        className="form-input"
+                                    />
                                 </div>
-                                <div className="form-group"><label>{t('labelCalculatedHours')}:</label><div className="calculated-hours">{createForm.leave_hours} {t('messageHours')}</div></div>
-                                <div className="form-group"><textarea value={createForm.reason} onChange={(e) => handleCreateFormChange('reason', e.target.value)} className="form-input" rows="3" placeholder={t('messagePlaceholderReason')} /></div>
+
+                                {createForm.start_date && createForm.end_date && (
+                                    <>
+                                        {createForm.start_date === createForm.end_date ? (
+                                            <div className="same-day-options">
+                                                <div className="form-group">
+                                                    <label>{t('labelTimeOption') || '時間選項'}:</label>
+                                                    <div className="time-option-radios">
+                                                        <label className="radio-option">
+                                                            <input
+                                                                type="radio"
+                                                                name="timeOption"
+                                                                checked={createForm.is_full_day}
+                                                                onChange={() => handleCreateFormChange('is_full_day', true)}
+                                                            />
+                                                            {t('fullDayOption') || '整天 (8小時)'}
+                                                        </label>
+                                                        <label className="radio-option">
+                                                            <input
+                                                                type="radio"
+                                                                name="timeOption"
+                                                                checked={!createForm.is_full_day}
+                                                                onChange={() => handleCreateFormChange('is_full_day', false)}
+                                                            />
+                                                            {t('specificTimeOption') || '指定時間'}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                {!createForm.is_full_day && (
+                                                    <>
+                                                        <div className="form-group">
+                                                            <label>{t('labelStartTime') || '開始時間'}:</label>
+                                                            <select
+                                                                value={createForm.start_time}
+                                                                onChange={(e) => handleCreateFormChange('start_time', e.target.value)}
+                                                                className="form-input"
+                                                            >
+                                                                <option value="">{t('selectTime') || '選擇時間'}</option>
+                                                                {getTimeOptions().map(time => (
+                                                                    <option key={time} value={time}>{time}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label>{t('labelEndTime') || '結束時間'}:</label>
+                                                            <select
+                                                                value={createForm.end_time}
+                                                                onChange={(e) => handleCreateFormChange('end_time', e.target.value)}
+                                                                className="form-input"
+                                                            >
+                                                                <option value="">{t('selectTime') || '選擇時間'}</option>
+                                                                {getTimeOptions(createForm.start_time).map(time => (
+                                                                    <option key={time} value={time}>{time}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="multi-day-info">
+                                                <div className="info-box">
+                                                    <span className="info-icon">📅</span>
+                                                    <div className="info-content">
+                                                        <div className="info-title">{t('multiDayLeave') || '多天請假'}</div>
+                                                        <div className="info-desc">
+                                                            {t('multiDayLeaveDesc') || '系統將自動計算工作日天數（跳過週末）'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                <div className="form-group">
+                                    <label>{t('labelCalculatedHours') || '計算時數'}:</label>
+                                    <div className="calculated-hours">
+                                        {createForm.leave_hours} {t('messageHours')}
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>{t('labelReason')} ({t('labelOptional') || '選填'}):</label>
+                                    <textarea
+                                        value={createForm.reason}
+                                        onChange={(e) => handleCreateFormChange('reason', e.target.value)}
+                                        className="form-input"
+                                        rows="3"
+                                        placeholder={t('messagePlaceholderReason') || '請輸入請假原因...'}
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div className="modal-footer">
-                            {/* [6] 統一按鈕樣式為 btn-secondary */}
-                            <button className="btn-secondary" onClick={handleCreateLeaveRequest}>✅ {t('actionSubmit') || '提交'}</button>
-                            <button className="btn-secondary" onClick={() => setShowCreateModal(false)}>{t('actionCancel')}</button>
+                            {/* 修正後的按鈕樣式：btn-secondary [34] */}
+                            <button
+                                className="btn-secondary"
+                                onClick={handleCreateLeaveRequest}
+                            >
+                                ✅ {t('actionSubmit') || '提交'}
+                            </button>
+                            <button
+                                className="btn-secondary"
+                                onClick={() => setShowCreateModal(false)}
+                            >
+                                {t('actionCancel')}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -522,18 +891,45 @@ const LeaveRequests = () => {
             {showModal && selectedRequest && (
                 <div className="modal-overlay" onClick={() => setShowModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header"><h3>{t('modalReviewRequest')}</h3><button className="modal-close" onClick={() => setShowModal(false)}>×</button></div>
+                        <div className="modal-header">
+                            <h3>{t('modalReviewRequest')}</h3>
+                            <button
+                                className="modal-close"
+                                onClick={() => setShowModal(false)}
+                            >
+                                ×
+                            </button>
+                        </div>
                         <div className="modal-body">
                             <div className="review-info">
                                 <p><strong>{t('labelEmployee')}:</strong> {selectedRequest.staff}</p>
                                 <p><strong>{t('labelLeaveType')}:</strong> {leaveTypeMap[selectedRequest.leave_type]}</p>
                                 <p><strong>{t('labelPeriod')}:</strong> {selectedRequest.start_date} ~ {selectedRequest.end_date}</p>
+                                <p><strong>{t('labelHours')}:</strong> {selectedRequest.leave_hours} {t('messageHours')}</p>
+                                {selectedRequest.reason && (
+                                    <p><strong>{t('labelReason')}:</strong> {selectedRequest.reason}</p>
+                                )}
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-success" onClick={() => handleStatusChange(selectedRequest.id, 'approved')}>✅ {t('actionApprove')}</button>
-                            <button className="btn btn-danger" onClick={() => handleStatusChange(selectedRequest.id, 'rejected')}>❌ {t('actionReject')}</button>
-                            <button className="btn-secondary" onClick={() => setShowModal(false)}>{t('actionCancel')}</button>
+                            <button
+                                className="btn btn-success"
+                                onClick={() => handleStatusChange(selectedRequest.id, 'approved')}
+                            >
+                                ✅ {t('actionApprove')}
+                            </button>
+                            <button
+                                className="btn btn-danger"
+                                onClick={() => handleStatusChange(selectedRequest.id, 'rejected')}
+                            >
+                                ❌ {t('actionReject')}
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setShowModal(false)}
+                            >
+                                {t('actionCancel')}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -541,4 +937,5 @@ const LeaveRequests = () => {
         </div>
     );
 };
+
 export default LeaveRequests;
