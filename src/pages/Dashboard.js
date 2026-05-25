@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   // 檢查用戶是否有管理權限 (staff/superuser)
   const hasManagementPermission = () => {
-    return user?.is_staff === true || user?.is_superuser === true;
+    return user?.is_manager === true || user?.is_superuser === true;
   };
 
   // 檢查用戶是否可以訪問薪資查詢 (所有員工都可以查看自己的薪資)

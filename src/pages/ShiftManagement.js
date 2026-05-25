@@ -107,7 +107,7 @@ const ShiftManagement = () => {
 
     // 權限檢查
     const checkPermissions = useCallback(() => {
-        if (!user || (!user.is_staff && !user.is_superuser)) {
+        if (!user || (!user.is_manager && !user.is_superuser)) {
             setPermissionError(true);
             return false;
         }

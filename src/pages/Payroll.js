@@ -37,7 +37,7 @@ const Payroll = () => {
 
     // 權限檢查
     const canAccessPayroll = () => {
-        return user?.is_staff === true || user?.position_type === 'admin';
+        return user?.is_manager === true || user?.position_type === 'admin';
     };
 
     // 檢查是否為超級用戶（只有超級用戶可以選擇員工）
@@ -47,7 +47,7 @@ const Payroll = () => {
 
     // 檢查是否為一般管理員
     const isAdmin = () => {
-        return user?.is_staff === true || user?.position_type === 'admin';
+        return user?.is_manager === true || user?.position_type === 'admin';
     };
 
     // 載入員工列表

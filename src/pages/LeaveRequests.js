@@ -144,7 +144,7 @@ const LeaveRequests = () => {
 
     // 檢查用戶是否可以審核請假 [3]
     const canReviewLeaveRequests = () => {
-        return user?.is_staff === true;
+        return user?.is_manager === true;
     };
 
     // 檢查是否為自己的請假申請 [3]

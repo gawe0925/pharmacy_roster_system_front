@@ -32,11 +32,11 @@ const StaffManagement = () => {
     };
 
     const isCurrentUserManager = () => {
-        return user?.is_superuser === false && user?.is_staff === true;
+        return user?.is_superuser === false && user?.is_manager === true;
     };
 
     const isCurrentUserEmployee = () => {
-        return user?.is_superuser === false && user?.is_staff === false;
+        return user?.is_superuser === false && user?.is_manager === false;
     };
 
     const canEditPassword = () => {
@@ -105,7 +105,7 @@ const StaffManagement = () => {
 
     // 檢查員工是否為經理
     const isManager = (member) => {
-        return member.is_superuser === false && member.is_staff === true;
+        return member.is_superuser === false && member.is_manager === true;
     };
 
     // 獲取用戶角色顯示

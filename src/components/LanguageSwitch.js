@@ -54,6 +54,24 @@ const LanguageSwitch = () => {
           }}
         />
 
+        {/* 英文選項 */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            width: '42px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: '600',
+            color: language === 'en' ? 'white' : 'rgba(87, 83, 78, 0.8)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          EN
+
         {/* 中文選項 */}
         <div
           style={{
@@ -73,23 +91,7 @@ const LanguageSwitch = () => {
           中文
         </div>
 
-        {/* 英文選項 */}
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 2,
-            width: '42px',
-            height: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px',
-            fontWeight: '600',
-            color: language === 'en' ? 'white' : 'rgba(87, 83, 78, 0.8)',
-            transition: 'all 0.3s ease',
-          }}
-        >
-          EN
+
         </div>
       </button>
     </div>

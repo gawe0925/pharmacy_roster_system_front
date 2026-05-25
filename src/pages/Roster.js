@@ -19,7 +19,7 @@ const Roster = () => {
   const [availableDateRange, setAvailableDateRange] = useState({ min: null, max: null });
 
   // 權限檢查
-  const hasManagementPermission = () => user && (user.is_staff || user.is_superuser);
+  const hasManagementPermission = () => user && (user.is_manager || user.is_superuser);
 
   // 日期工具
   const pad2 = (n) => String(n).padStart(2, '0');

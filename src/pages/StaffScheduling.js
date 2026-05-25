@@ -45,7 +45,7 @@ const StaffScheduling = () => {
 
     // 權限檢查
     const checkPermissions = () => {
-        if (!user || (!user.is_staff && !user.is_superuser)) {
+        if (!user || (!user.is_manager && !user.is_superuser)) {
             setPermissionError(true);
             return false;
         }
