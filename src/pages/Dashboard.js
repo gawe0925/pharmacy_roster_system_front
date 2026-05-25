@@ -119,7 +119,7 @@ const Dashboard = () => {
         setShiftTypes(shiftTypesRes.data.results || shiftTypesRes.data || []);
 
         const allShifts = shiftsRes.data.results || shiftsRes.data || [];
-        console.log('All shifts received:', allShifts);
+        // console.log('All shifts received:', allShifts);
         
         // 過濾出今天的班次（雙重確保）
         const todayShiftsOnly = allShifts.filter(shift => shift.shift_date === today);
@@ -139,15 +139,15 @@ const Dashboard = () => {
   }, []);
 
   // 獲取班次時間信息
-  const getShiftTimeInfo = (shiftName) => {
-    // 防呆：確保 shiftName 是字串
-    const safeShiftName = shiftName != null ? String(shiftName) : '';
-
+  const getShiftTimeInfo = (shiftId, shiftName) => {
+    // 先用 shift_name 直接找
     const shiftType = shiftTypes.find(type => 
-      type.shift_name === safeShiftName || safeShiftName.includes(type.shift_name)
+      type.shift_name === shiftName || type.id === shiftId
     );
     
     if (shiftType) {
+      console.log('shiftTypes state:', shiftTypes);
+      console.log('todayShifts state:', todayShifts);
       return {
         startTime: formatTime(shiftType.start_time),
         endTime: formatTime(shiftType.end_time),
@@ -158,7 +158,7 @@ const Dashboard = () => {
     return {
       startTime: '',
       endTime: '',
-      shiftName: safeShiftName
+      shiftName: shiftName || String(shiftId)
     };
   };
 
@@ -285,7 +285,7 @@ const Dashboard = () => {
             {/* 表格內容 */}
             <div className="shifts-table-body">
               {todayShifts.map((shift, index) => {
-                const timeInfo = getShiftTimeInfo(shift.shift);
+                const timeInfo = getShiftTimeInfo(shift.shift, shift.shift_name);
                 
                 // 獲取實際工作人員
                 const getActualWorker = (shift) => {
