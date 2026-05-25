@@ -67,7 +67,7 @@ function AdminRoute({ children }) {
     return <Navigate to="/login" />;
   }
   
-  const hasAdminPermission = user && (user.is_staff || user.is_superuser);
+  const hasAdminPermission = user && (user.is_manager || user.is_superuser);
   if (!hasAdminPermission) {
     return (
       <div style={{
@@ -87,9 +87,9 @@ function AdminRoute({ children }) {
           maxWidth: '500px'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚫</div>
-          <h2 style={{ color: '#dc3545', marginBottom: '15px' }}>訪問被拒絕</h2>
-          <p style={{ color: '#666', marginBottom: '10px' }}>您沒有權限訪問此頁面。</p>
-          <p style={{ color: '#666', marginBottom: '20px' }}>如需訪問權限，請聯繫系統管理員。</p>
+          <h2 style={{ color: '#dc3545', marginBottom: '15px' }}>Access Denied</h2>
+          <p style={{ color: '#666', marginBottom: '10px' }}>You do not have permission to access this page.</p>
+          <p style={{ color: '#666', marginBottom: '20px' }}>Please contact the system administrator to request access.</p>
           <button 
             style={{
               padding: '10px 20px',

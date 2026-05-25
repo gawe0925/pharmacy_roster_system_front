@@ -77,8 +77,8 @@ export const userAPI = {
   list: (params) => api.get('/users/', { params }),
   get: (id) => api.get(`/users/${id}/`),
   getCurrentUser: () => api.get('/users/me/'),
-  getStaff: (params) =>
-    api.get('/users/', { params: { ...params, is_staff: true } }),
+  getManagers: (params) =>
+    api.get('/users/', { params: { ...params, is_manager: true } }),
   getAllForScheduling: (params) =>
     api.get('/users/', { params: { ...params, is_active: true } }),
 };
