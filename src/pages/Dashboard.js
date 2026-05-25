@@ -146,8 +146,6 @@ const Dashboard = () => {
     );
     
     if (shiftType) {
-      console.log('shiftTypes state:', shiftTypes);
-      console.log('todayShifts state:', todayShifts);
       return {
         startTime: formatTime(shiftType.start_time),
         endTime: formatTime(shiftType.end_time),
