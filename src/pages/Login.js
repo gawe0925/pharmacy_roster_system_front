@@ -114,7 +114,7 @@ const Login = () => {
         {/* 額外資訊 */}
         <div className="login-footer">
           <p className="demo-account-text">
-            Demo Account | With no Create/Update Permission
+            Demo Account - Read-Only Access
           </p>
           <p className="demo-credentials">
             Email: manager@test.com
