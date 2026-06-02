@@ -31,10 +31,36 @@ const Login = () => {
 
     try {
       await login(formData);
+
+
+      // =========================
+      // Clarity tracking (LOGIN SUCCESS)
+      // =========================
+      if (window.clarity) {
+        window.clarity("event", "login_success");
+
+        // 標記 demo account
+        if (formData.email === "manager@test.com") {
+          window.clarity("event", "demo_account_login");
+          window.clarity("set", "account_type", "demo");
+        } else {
+          window.clarity("set", "account_type", "normal");
+        }
+      }
+
       navigate('/dashboard');
+
     } catch (err) {
       console.error('Login error:', err);
+
       setError(err.response?.data?.detail || t('loginFailed') || 'Login failed');
+    
+      // Clarity tracking (LOGIN FAIL)
+      if (window.clarity) {
+        window.clarity("event", "login_failed");
+        window.clarity("set", "login_error", err.response?.status?.toString() || "unknown");
+      }
+
     } finally {
       setLoading(false);
     }
@@ -57,7 +83,7 @@ const Login = () => {
             {t('loginSubtitle')}
           </p>
         </div>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">
