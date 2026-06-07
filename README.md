@@ -22,7 +22,7 @@ The React frontend was developed with AI-assisted tools, while all system design
 ## ✨ Features
 
 | Feature | Description |
-
+|---|---|
 | 🔐 Authentication | Role-based login for Manager, Full-time, Part-time, and Casual staff |
 | 🗓 Shift Scheduling | View, create, edit, and delete shifts via an intuitive UI |
 | 👥 Staff Management | Manage team members and their assigned roles |
@@ -35,7 +35,7 @@ The React frontend was developed with AI-assisted tools, while all system design
 ## 🛠 Tech Stack
 
 | Category | Technology |
-
+|---|---|
 | Framework | React (Create React App) |
 | Language | JavaScript |
 | Styling | CSS |
